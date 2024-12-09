@@ -33,12 +33,21 @@
           $flat = mysqli_fetch_assoc($result);
           if ($flat) {
             $ownerName = htmlspecialchars($flat['owner_name']);
+            $flatName = htmlspecialchars($flat['flatname']);
+            $flatNumber = htmlspecialchars($flat['flat_number']);
             $mobileNumber = htmlspecialchars($flat['mobile_number']);
             $optionalNumber = htmlspecialchars($flat['optional_number']);
+            $rent = htmlspecialchars($flat['rent']);
+            $advance = htmlspecialchars($flat['advance']);
           } else {
             // Handle the case where the flat is not found
             $ownerName = 'Not Found';
+            $flatName = 'Not Found';
+            $flatNumber = 'Not Found';
             $mobileNumber = 'Not Found';
+            $optionalNumber = 'Not Found';
+            $rent = 'Not Found';
+            $advance = 'Not Found';
           }
 
 
@@ -53,17 +62,30 @@
                 </h5>
                 <hr>
                 <p class="card-text">
+                  <span class="fw-bold" style="color: #e74c3c;">Flat Name:</span>
+                  <span class="text-muted"><?php echo $data["flatname"]; ?></span>
+                </p>
+
+                <p class="card-text">
+                  <span class="fw-bold" style="color: #e74c3c;">Rent:</span>
+                  <span class="text-muted"><?php echo $data["rent"]; ?></span>
+                </p>
+
+                <p class="card-text">
+                  <span class="fw-bold" style="color: #e74c3c;">Advance:</span>
+                  <span class="text-muted"><?php echo $data["advance"]; ?></span>
+                </p>
+
+                <p class="card-text">
                   <span class="fw-bold" style="color: #2ecc71;">Mobile Number:</span>
                   <span class="text-muted"><?php echo $data["mobile_number"]; ?></span>
                 </p>
+               
                 <p class="card-text">
                   <span class="fw-bold" style="color: #2ecc71;">Optional Number:</span>
                   <span class="text-muted"><?php echo $data["optional_number"]; ?></span>
                 </p>
-                <p class="card-text">
-                  <span class="fw-bold" style="color: #e74c3c;">Flat Name:</span>
-                  <span class="text-muted"><?php echo $data["flatname"]; ?></span>
-                </p>
+                
                 <p class="card-text">
                   <span class="fw-bold" style="color: #e74c3c;">Flat No:</span>
                   <span class="text-muted"><?php echo $data["flat_number"]; ?></span>

@@ -40,6 +40,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     // Calculate total amount
     $totalAmount = $serviceCharge + $internetBill + $dishBill + $flatRent + $commonBill + $centerRent + $centerVarious + $atticRent + $donation + $developmentVarious;
 
+    // Convert total amount to words
+    $totalAmountWords = ucfirst(numberToWords($totalAmount));
+
 
 
     $msg = ' ServiceCharge - ' . $serviceCharge . '';
@@ -147,9 +150,9 @@ Darussalam Tower , Mirpur
                                
                                 <div style='justify-content:space-between;'>
                                 
-                                 <img src='img/darus-sunna-logo1-150x150.png' alt='logo' style='width: 100px; height: 100px; background-color:black; border-radius:50%;'>
+                                
                                  
-                                 <p><span style='font-size:20px; font-weight:bold;'>দারুস সালাম এ্যাপার্টমেন্ট ওনার্স এসোসিয়েশন</span><br>৫৯/ডি/এ, দারুস সালাম, মিরপুর, ঢাকা-১২১৬</p>
+                                 <p><span style='font-size:20px; font-weight:bold;'>INVOICE</p>
                                  
                                 <h3>Office Copy</h3>
                                 </div>
@@ -202,11 +205,10 @@ Darussalam Tower , Mirpur
                 echo "</tbody>
                     </table>
                     <div class='invoice-total'>
-                        <p>Total Amount:  ৳" . number_format($totalAmount, 0) . "</p>
+                        <p>Total Amount: ৳" . number_format($totalAmount, 0) . " (" . ucfirst($totalAmountWords) . " taka)</p>
                     </div>
                     <div class='invoice-footer'>
-                    
-                    <button onclick='editInvoice()'>Edit Invoice</button>
+                    <p>Invoice Number: $newInvoiceNumber</p>
                     <p>Thank you for your business!</p>
                     </div>
                 </div>
@@ -220,9 +222,9 @@ Darussalam Tower , Mirpur
                               <div>  
                               <div style='display:flex; justify-content: center; align-items:center; gap:10px;'>
                                 
-                                 <img src='img/darus-sunna-logo1-150x150.png' alt='logo' style='width: 100px; height: 100px; background-color:black; border-radius:50%;'>
+                           
                                  
-                                <p><span style='font-size:20px; font-weight:bold;'>দারুস সালাম এ্যাপার্টমেন্ট ওনার্স এসোসিয়েশন</span><br>৫৯/ডি/এ, দারুস সালাম, মিরপুর, ঢাকা-১২১৬</p>
+                                <p><span style='font-size:20px; font-weight:bold;'>INVOICE</p>
                                  
                                 </div>
                                 <h3>Customer Copy</h3>
@@ -263,7 +265,7 @@ Darussalam Tower , Mirpur
                 echo "</tbody>
                     </table>
                     <div class='invoice-total'>
-                        <p>Total Amount:  ৳" . number_format($totalAmount, 0) . "</p>
+                        <p>Total Amount:  ৳" . number_format($totalAmount, 0) . " (" . ucfirst($totalAmountWords) . " taka)</p>
                     </div>
                     <div class='invoice-footer'>
                     <p>Invoice Number: $newInvoiceNumber</p>

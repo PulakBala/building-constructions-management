@@ -16,10 +16,13 @@ $updateSuccessful = false; // Flag to check if the update was successful
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $owner = $_POST['owner'];
+    $flatname = $_POST['flatname'];
     $tel = $_POST['tel'];
+    $optional_number = $_POST['optional_number'];
     $flatno = $_POST['flatno'];
-
-    $updateQuery = "UPDATE flats SET owner_name='$owner', mobile_number='$tel', flat_number='$flatno' WHERE id='$id'";
+    $rent = $_POST['rent'];
+    $advance = $_POST['advance'];
+    $updateQuery = "UPDATE flats SET owner_name='$owner', flatname='$flatname', mobile_number='$tel', optional_number='$optional_number', flat_number='$flatno', rent='$rent', advance='$advance' WHERE id='$id'";
     if (mysqli_query($conn, $updateQuery)) {
         $_SESSION['message'] = "Flat updated successfully!";
         $_SESSION['msg_type'] = "success";
@@ -46,15 +49,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <?php unset($_SESSION['message']); ?> <!-- Clear message after displaying -->
                         </div>
                     <?php endif; ?>
-                        <h2 class="text-center mb-4">Edit Flat</h2>
+                        <h2 class="text-center mb-4">EDIT AND UPDATE</h2>
                         <div class="mb-3">
                           <input type="text" name="owner" class="form-control" value="<?= $updateSuccessful ? htmlspecialchars($owner) : htmlspecialchars($flat['owner_name']) ?>" required>
                         </div>
                         <div class="mb-3">
+                          <input type="text" name="flatname" class="form-control" value="<?= $updateSuccessful ? htmlspecialchars($flatname) : htmlspecialchars($flat['flatname']) ?>" required>
+                        </div>
+                        
+                        <div class="mb-3">
                           <input type="tel" name="tel" class="form-control" value="<?= $updateSuccessful ? htmlspecialchars($tel) : htmlspecialchars($flat['mobile_number']) ?>" required>
                         </div>
                         <div class="mb-3">
+                          <input type="text" name="optional_number" class="form-control" value="<?= $updateSuccessful ? htmlspecialchars($optional_number) : htmlspecialchars($flat['optional_number']) ?>" required>
+                        </div>
+                        <div class="mb-3">
                           <input type="text" name="flatno" class="form-control" value="<?= $updateSuccessful ? htmlspecialchars($flatno) : htmlspecialchars($flat['flat_number']) ?>" required>
+                        </div>
+                        <div class="mb-3">
+                          <input type="number" step="0.01" name="rent" class="form-control" value="<?= $updateSuccessful ? htmlspecialchars($rent) : htmlspecialchars($flat['rent']) ?>" required>
+                        </div>
+                        <div class="mb-3">
+                          <input type="number" step="0.01" name="advance" class="form-control" value="<?= $updateSuccessful ? htmlspecialchars($advance) : htmlspecialchars($flat['advance']) ?>" required>
                         </div>
                         <div class="text-center">
                           <button type="submit" class="btn btn-primary w-100">Update</button>
