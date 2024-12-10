@@ -66,7 +66,7 @@ function get_acc($FltID, $month, $year, $cmd)
   }
 
   if ($cmd == 'MONTH') {
-    $fetchQuery = "SELECT sum(f_total) as Total_am FROM flat_bill WHERE f_month = '{$month}' AND f_year = '{$year}' AND f_status = 'Received' ";
+    $fetchQuery = "SELECT sum(f_paid_amount) as Total_am FROM flat_bill WHERE f_month = '{$month}' AND f_year = '{$year}' AND f_status = 'Received' ";
     $result = mysqli_query($conn, $fetchQuery);
     $row = mysqli_fetch_assoc($result);
     echo number_format((float)$row['Total_am'], 0);

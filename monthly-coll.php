@@ -18,7 +18,11 @@
               $f_total = $_POST['f_total'];
               $f_month = $_POST['f_month'];
               $f_year = $_POST['f_year'];
-              $msg = 'Bill Paid ' . $f_total . '.TK for ' . $f_month . '-' . $f_year . '';
+              $f_due = $f_total - $paid_amount;
+
+              $msg = 'Bill Paid ৳' . number_format($paid_amount, 2) . ' for ' . $f_month . '-' . $f_year . 
+                     '. Due amount: ৳' . number_format($f_due, 2);
+              
               sendGSMS('8809617620596', $mobile_number, $msg, 'C200022562c68264972b36.87730554', 'text&contacts');
             }
             $updateQuery = "UPDATE flat_bill 
@@ -52,7 +56,7 @@
 		  on flats.id = flat_bill.f_flatId";
           $result = mysqli_query($conn, $fetchQuery);
 
-          echo "<h2>Bill Records</h2>";
+          echo "<h2>BILL RECORDS</h2>";
           echo "<table class='table table-bordered table-hover'>";
           echo "<thead  class='thead-dark'>
             <tr>
@@ -72,7 +76,7 @@
                 <th>Development&nbsp;</th>
                 <th>Total</th>
                 <th>Status</th>
-                <th>Action</th> <!-- Added Action column -->
+                <th class='text-center'>Action</th> <!-- Added Action column -->
             </tr>
           </thead>";
           echo "<tbody>";
@@ -111,8 +115,10 @@
                       <input type='hidden' name='f_total' value='" . $row['f_total'] . "'>
                       <input type='hidden' name='f_month' value='" . $row['f_month'] . "'>
                       <input type='hidden' name='f_year' value='" . $row['f_year'] . "'>
-                      <input type='number' name='paid_amount' placeholder='পরিশোধি��� টাকা' required>
-                      <button type='submit' class='btn btn-success'>Received</button>
+                      <div class='d-flex '>
+                      <input type='number' name='paid_amount' placeholder='paid amount' required class='p-1 rounded mr-2'>
+                      <button type='submit' class='btn btn-success '>Received</button>
+                      </div>
                     </form>";
             } else {
               echo "<form method='POST' action=''>

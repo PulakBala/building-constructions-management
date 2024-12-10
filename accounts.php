@@ -17,7 +17,7 @@
                         <div class="col-md-4 mb-4">
                             <div class="card shadow border-0">
                                 <div class="card-header bg-primary text-white">
-                                    <h5 class="card-title">TOTAL COLLECTION</h5>
+                                    <h5 class="card-title">TOTAL BILL</h5>
                                 </div>
                                 <div class="card-body">
                                     <h2 class="card-text text-success"><?=get_acc('0','0','0','ALL')?> .TK</h2>
