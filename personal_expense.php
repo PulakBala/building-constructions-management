@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Prepare and execute the SQL query to insert data using MySQLi
     $sql = "INSERT INTO expense (amount, date, description) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param('dsi', $amount, $date, $description);
+    $stmt->bind_param('dss', $amount, $date, $description);
 
     if ($stmt->execute()) {
         echo "<script>toastr.success('Expense added successfully!');</script>";
@@ -117,7 +117,7 @@ $stmt->close();
                 
                     <div class="mb-3">
                       <label class="form-label" style="font-size: 1rem; font-weight: bold;">Expense Description</label>
-                      <input type="text" class="form-control form-control" name="description" placeholder="Expense Description" required>
+                      <textarea type="text" class="form-control form-control" name="description" placeholder="Expense Description" required></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary btn">
                       <i class="align-middle" data-feather="plus"></i>

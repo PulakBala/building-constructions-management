@@ -121,7 +121,7 @@ $revenues = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
                             <button type="submit" class="btn btn-primary ">
                                 <i class="align-middle" data-feather="plus"></i>
-                                Add Revenue
+                                Add Payment
                             </button>
                         </form>
                     </div>
@@ -218,11 +218,11 @@ $revenues = mysqli_fetch_all($result, MYSQLI_ASSOC);
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Revenue</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit and update</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Content will be loaded here from "edit_addData.php" -->
+                <!-- Content will be loaded here from " .php" -->
             </div>
         </div>
     </div>

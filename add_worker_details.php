@@ -1,4 +1,7 @@
-<?php include('connection.php');?>
+<?php 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+include('connection.php');?>
 <?php include('header.php'); ?>
 <?php include('sidebar.php'); 
 // Check if the form is submitted
@@ -54,15 +57,15 @@ $revenues = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     <div class="row">
 
-<!-- Include Toastr CSS and JS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+      <!-- Include Toastr CSS and JS -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 
 
-<!-- Include jQuery and Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+      <!-- Include jQuery and Bootstrap JS -->
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
 <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -156,7 +159,7 @@ $revenues = mysqli_fetch_all($result, MYSQLI_ASSOC);
                                 <td><?php echo htmlspecialchars($revenue['worker_title']); ?></td>
                                
                                 <td>
-                                <a href="javascript:void(0);" onclick="loadEditForm(<?php echo htmlspecialchars($revenue['id']); ?>);" class="btn btn-sm btn-warning">Edit</a>
+                                <a href="javascript:void(0);" onclick="loadEditForm(<?php echo htmlspecialchars($revenue['id']); ?>);" class="btn btn-sm btn-warning" style="display: none;">Edit</a>
 
                                 <a href="javascript:void(0);" onclick="openDeleteModal('delete_add_payment.php?table=workers_details&id=<?php echo htmlspecialchars($revenue['id']); ?>');" class="btn btn-sm btn-danger">Delete</a>
                                 </td>
@@ -217,7 +220,7 @@ $revenues = mysqli_fetch_all($result, MYSQLI_ASSOC);
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Revenue</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit and update</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -231,9 +234,9 @@ $revenues = mysqli_fetch_all($result, MYSQLI_ASSOC);
     // Function to load edit form into the modal
     function loadEditForm(id) {
         $.ajax({
-            url: 'edit_add_payment.php',
+            url: 'edit_worker_details.php',
             type: 'GET',
-            data: { id: id, table: 'revenue' },
+            data: { id: id, table: 'workers_details' },
             success: function(response) {
                 $('#editModal .modal-body').html(response);
                 $('#editModal').modal('show');
