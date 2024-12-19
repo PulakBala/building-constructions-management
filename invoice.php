@@ -23,6 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $commonBill = isset($_GET['commonBill']) ? floatval($_GET['commonBill']) : 0;
     $centerRent = isset($_GET['centerRent']) ? floatval($_GET['centerRent']) : 0;
     $centerVarious = isset($_GET['centerVarious']) ? floatval($_GET['centerVarious']) : 0;
+    $guardBill = isset($_GET['guardBill']) ? floatval($_GET['guardBill']) : 0;
+    $emptyFlatBill = isset($_GET['emptyFlatBill']) ? floatval($_GET['emptyFlatBill']) : 0;
     $atticRent = isset($_GET['atticRent']) ? floatval($_GET['atticRent']) : 0;
     $donation = isset($_GET['donation']) ? floatval($_GET['donation']) : 0;
     $developmentVarious = isset($_GET['developmentVarious']) ? floatval($_GET['developmentVarious']) : 0;
@@ -38,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
 
     // Calculate total amount
-    $totalAmount = $serviceCharge + $internetBill + $dishBill + $flatRent + $commonBill + $centerRent + $centerVarious + $atticRent + $donation + $developmentVarious;
+    $totalAmount = $serviceCharge + $internetBill + $dishBill + $flatRent + $commonBill + $centerRent + $guardBill + $emptyFlatBill + $centerVarious + $atticRent + $donation + $developmentVarious;
 
     // Convert total amount to words
     $totalAmountWords = ucfirst(numberToWords($totalAmount));
@@ -51,13 +53,15 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $msg .= ' FlatRent - ' . $flatRent;
     $msg .= ' CommonBill - ' . $commonBill;
     $msg .= ' CenterRent - ' . $centerRent;
+    $msg .= ' GuardSallary - ' . $guardBill;
+    $msg .= ' EmptyFlatBill - ' . $emptyFlatBill;
     $msg .= ' CenterVarious - ' . $centerVarious;
     $msg .= ' AtticRent - ' . $atticRent;
     $msg .= ' Donation - ' . $donation;
     $msg .= ' DevelopmentVarious - ' . $developmentVarious;
     $msg .= ' Total  - ' . $totalAmount;
     $msg .= ' For ' . $selectedMonth . '-' . $selectedYear . ' 
-Darussalam Tower , Mirpur
+Sobarmart , Tongi , Gazipur
 ';
 
 
@@ -87,8 +91,8 @@ Darussalam Tower , Mirpur
         $lastInvoiceNumber = $row['last_invoice'] ? $row['last_invoice'] : 0;
         $newInvoiceNumber = $lastInvoiceNumber + 1; // Increment the last invoice number
 
-        $sql = "INSERT INTO flat_bill (f_date, f_month, f_year, f_service_charge, f_int_bill, f_dish_bill, f_flat_rent, f_c_current_bill, f_c_center_rent, f_c_center_various, f_atic_rent, f_d_donation, f_d_various_charge, f_status, f_flatId,f_total, f_invoice_number) 
-    VALUES (NOW(), '$selectedMonth', '$selectedYear', $serviceCharge, $internetBill, $dishBill, $flatRent, $commonBill, $centerRent, $centerVarious, $atticRent, $donation, $developmentVarious, 'Pending',$flatId,$totalAmount, $newInvoiceNumber)";
+        $sql = "INSERT INTO flat_bill (f_date, f_month, f_year, f_service_charge, f_int_bill, f_dish_bill, f_flat_rent, f_c_current_bill, f_c_center_rent, f_guard_slry, f_empty_flat, f_c_center_various, f_atic_rent, f_d_donation, f_d_various_charge, f_status, f_flatId,f_total, f_invoice_number) 
+    VALUES (NOW(), '$selectedMonth', '$selectedYear', $serviceCharge, $internetBill, $dishBill, $flatRent, $commonBill, $centerRent, $guardBill, $emptyFlatBill, $centerVarious, $atticRent, $donation, $developmentVarious, 'Pending',$flatId,$totalAmount, $newInvoiceNumber)";
 
         // Execute SQL statement
         if ($conn->query($sql) === TRUE) {
@@ -186,6 +190,8 @@ Darussalam Tower , Mirpur
                     ['description' => 'Dish Bill', 'amount' => $dishBill],
                     ['description' => 'Flat Rent', 'amount' => $flatRent],
                     ['description' => 'Common Bill', 'amount' => $commonBill],
+                    ['description' => 'Guard Sallary', 'amount' => $guardBill],
+                    ['description' => 'Empty Flat', 'amount' => $emptyFlatBill],
                     ['description' => 'Center Rent', 'amount' => $centerRent],
                     ['description' => 'Center Various', 'amount' => $centerVarious],
                     ['description' => 'Attic Rent', 'amount' => $atticRent],

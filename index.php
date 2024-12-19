@@ -7,9 +7,13 @@
 $currentMonth = date('F');  // e.g., "December"
 $currentYear = date('Y');   // e.g., "2024"
 
+// Check if a search query is provided
+$searchQuery = isset($_POST['query']) ? $_POST['query'] : '';
+
 // Fetch data
 $flatData = getFlatBillSummary($currentMonth, $currentYear);
 // print_r($flatData);
+
 ?>
 
 <main class="page-content">
@@ -59,38 +63,42 @@ $flatData = getFlatBillSummary($currentMonth, $currentYear);
 
 
 
-                      
+
                     </div>
                 </div>
 
+                <div>
+                    <input type="search" id="form1" class="form-control" placeholder="Search : Name" />
+                </div>
 
                 <div class="table-responsive mt-4">
-                            <h2>FLAT BILL SUMMARY FOR <?php echo $currentMonth . " " . $currentYear; ?></h2>
-                            <table class="table table-bordered  table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Flat ID</th>
-                                        <th>Flat Name</th>
-                                        <th>Flat Number</th>
-                                        <th>Total Collected (৳)</th>
-                                        <th>Total Due (৳)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($flatData as $flat): ?>
-                                        <tr>
-                                            <td><?php echo $flat['f_flatId']; ?></td>
-                                            <td><?php echo $flat['flatname']; ?></td>
-                                            <td><?php echo $flat['flat_number']; ?></td>
-                                           
 
-                                            <td><?php echo number_format($flat['total_collected'], 2); ?></td>
-                                            <td><?php echo number_format($flat['f_due'], 2); ?></td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
+                    <h2>FLAT BILL SUMMARY FOR <?php echo $currentMonth . " " . $currentYear; ?></h2>
+                    <table class="table table-bordered  table-hover">
+                        <thead>
+                            <tr>
+                                <th>Flat ID</th>
+                                <th>Flat Name</th>
+                                <th>Flat Number</th>
+                                <th>Total Collected (৳)</th>
+                                <th>Total Due (৳)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($flatData as $flat): ?>
+                                <tr>
+                                    <td><?php echo $flat['f_flatId']; ?></td>
+                                    <td><?php echo $flat['flatname']; ?></td>
+                                    <td><?php echo $flat['flat_number']; ?></td>
+
+
+                                    <td><?php echo number_format($flat['total_collected'], 2); ?></td>
+                                    <td><?php echo number_format($flat['f_due'], 2); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
 
                 <!-- Include Font Awesome for icons -->
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -98,4 +106,24 @@ $flatData = getFlatBillSummary($currentMonth, $currentYear);
         </div>
     </div>
 </main>
+
+<script>
+    $(document).ready(function() {
+        $("#form1").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $.ajax({
+                url: "search_students.php", // This is the PHP file that processes the search and returns results
+                type: "POST",
+                data: {
+                    query: value
+                },
+                success: function(data) {
+                    console.log(data);
+                    $("tbody").html(data); // Update the table body with the search results
+                }
+            });
+        });
+    });
+</script>
+
 <?php include('footer.php') ?>

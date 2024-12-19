@@ -54,9 +54,54 @@
           // Fetch all billing records
           $fetchQuery = "SELECT * FROM flat_bill LEFT JOIN flats
 		  on flats.id = flat_bill.f_flatId";
+
+
+
+          // {{ edit_2 }}: Modify the query to filter by month and year if provided
+          if (isset($_GET['month']) && isset($_GET['year'])) {
+              $month = $_GET['month'];
+              $year = $_GET['year'];
+              $fetchQuery .= " WHERE f_month = '$month' AND f_year = '$year'";
+          }
+          // {{ edit_2 }} end
+
           $result = mysqli_query($conn, $fetchQuery);
 
-          echo "<h2>BILL RECORDS</h2>";
+          echo "
+                    
+                 <div class='row mb-3 d-flex justify-content-center align-items-center'>
+                 <h2 calss='text-center mr-2'>BILL RECORDS</h2>
+                            <div class='ml-2 p-1'>
+                              <form  method='GET'>
+                                <select class='p-1' name='month' required>
+                                  <option value=''>Select Month</option>
+                                  <option value='January'>January</option>
+                                  <option value='February'>February</option>
+                                  <option value='March'>March</option>
+                                  <option value='April'>April</option>
+                                  <option value='May'>May</option>
+                                  <option value='June'>June</option>
+                                  <option value='July'>July</option>
+                                  <option value='August'>August</option>
+                                  <option value='September'>September</option>
+                                  <option value='October'>October</option>
+                                  <option value='November'>November</option>
+                                  <option value='December'>December</option>
+                                </select>
+                                <select class='p-1' name='year' required>
+                                  <option value=''>Select Year</option>
+                                  <option value='2025'>2025</option>
+                                  <option value='2024'>2024</option>
+                                  <option value='2023'>2023</option>
+                                  <option value='2022'>2022</option>
+                                  <option value='2021'>2021</option>
+                                  <!-- Add more years as needed -->
+                                </select>
+                                <button type='submit' class='btn btn-primary p-1 px-3 pb-1 mb-1'>Filter</button>
+                              </form>
+                            </div>
+                          </div>";
+                    // {{ edit_1 }} end
           echo "<table class='table table-bordered table-hover'>";
           echo "<thead  class='thead-dark'>
             <tr>
@@ -64,16 +109,18 @@
                 <th>Flat</th>
                 <th>Month</th>
                 <th>Year</th>
-                <th>Service&nbsp;Charge</th>
+
+
+                <th>Flat&nbsp;Rent</th>
                 <th>Net&nbsp;Bill</th>
                 <th>Dish&nbsp;Bill</th>
-                <th>Flat&nbsp;Rent</th>
-                <th>Common&nbsp;Bill</th>
-                <th>Center&nbsp;Rent</th>
-                <th>Various</th>
-                <th>Attic&nbsp;Rent</th>
-                <th>Donation</th>
-                <th>Development&nbsp;</th>
+                <th>Service&nbsp;Charge</th>
+                <th>Current&nbsp;Bill</th>
+                <th>Guard&nbsp;Sallary</th>
+                <th>Empty&nbsp;Flat</th>
+                <th>Other&nbsp;Expense</th>
+
+                
                 <th>Total</th>
                 <th>Status</th>
                 <th class='text-center'>Action</th> <!-- Added Action column -->
@@ -93,16 +140,15 @@
               <td>" . htmlspecialchars($row['flat_number']) . "</td>
               <td>" . htmlspecialchars($row['f_month']) . "</td>
               <td>" . htmlspecialchars($row['f_year']) . "</td>
-              <td>৳" . number_format($row['f_service_charge'], 0) . "</td>
+              <td>৳" . number_format($row['f_flat_rent'], 0,) . "</td>
               <td>৳" . number_format($row['f_int_bill'], 0,) . "</td>
               <td>৳" . number_format($row['f_dish_bill'], 0,) . "</td>
-              <td>৳" . number_format($row['f_flat_rent'], 0,) . "</td>
+              <td>৳" . number_format($row['f_service_charge'], 0) . "</td>
               <td>৳" . number_format($row['f_c_current_bill'], 0,) . "</td>
-              <td>৳" . number_format($row['f_c_center_rent'], 0,) . "</td>
+             <td>৳" . number_format($row['f_guard_slry'], 0,) . "</td>
+             <td>৳" . number_format($row['f_empty_flat'], 0,) . "</td>
               <td>৳" . number_format($row['f_c_center_various'], 0,) . "</td>
-              <td>৳" . number_format($row['f_atic_rent'], 0,) . "</td>
-              <td>৳" . number_format($row['f_d_donation'], 0,) . "</td>
-              <td>৳" . number_format($row['f_d_various_charge'], 0,) . "</td>
+
               <td>৳" . number_format($row['f_total'], 0,) . "</td>
               <td>" . $f_status . "</td>
               <td>";

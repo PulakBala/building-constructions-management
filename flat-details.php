@@ -122,19 +122,44 @@
                                     <input type="number" id="commonBill" name="commonBill" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($internetBill); ?>">
                                 </div>
                             </div>
+
                             <div class="form-section">
-                                <h5>6. Various Rent</h5>
+                                <h5>6. Sallary</h5>
                                 <div class="form-row" style="display: none;">
                                     <label for="centerRent">Rent</label>
                                     <input type="number" id="centerRent" name="centerRent" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($internetBill); ?>">
                                 </div>
                                 <div class="form-row">
-                                    <label for="centerVarious">Various Charges</label>
+                                    <label for="guardBill">Guard Sallary</label>
+                                    <input type="number" id="guardBill" name="guardBill" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($centerVarious); ?>">
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <h5>7. Flat</h5>
+                                <div class="form-row" style="display: none;">
+                                    <label for="centerRent">Rent</label>
+                                    <input type="number" id="centerRent" name="centerRent" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($internetBill); ?>">
+                                </div>
+                                <div class="form-row">
+                                    <label for="emptyFlatBill">Empty Flat </label>
+                                    <input type="number" id="emptyFlatBill" name="emptyFlatBill" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($centerVarious); ?>">
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <h5>8. Other expense</h5>
+                                <div class="form-row" style="display: none;">
+                                    <label for="centerRent">Rent</label>
+                                    <input type="number" id="centerRent" name="centerRent" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($internetBill); ?>">
+                                </div>
+                                <div class="form-row">
+                                    <label for="centerVarious">Other Charges</label>
                                     <input type="number" id="centerVarious" name="centerVarious" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($centerVarious); ?>">
                                 </div>
                             </div>
                             <div class="form-section" style="display: none;">
-                                <h5>7. Rooftop Room Rent</h5>
+                                <h5>8. Rooftop Room Rent</h5>
 
                                 <div class="form-row">
                                     <label for="atticRent">Rent</label>
@@ -142,7 +167,7 @@
                                 </div>
                             </div>
                             <div class="form-section" style="display: none;">
-                                <h5>8. Development</h5>
+                                <h5>9. Development</h5>
                                 <div class="form-row">
                                     <label for="donation">Donation</label>
                                     <input type="number" id="donation" name="donation" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($donation); ?>">
