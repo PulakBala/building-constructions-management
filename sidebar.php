@@ -7,7 +7,7 @@ if (isset($_SESSION['sa_crm_drs_id']) and $_SESSION['sa_crm_drs_id'] == true) {
   die();
 }
 ?>
-<div class="sidebar left ">
+<div class="sidebar left " style="overflow-y: auto;">
   <div class="user-panel">
     <div class="pull-left image">
       <img src="img/sobamarthltd.jpeg" class="mt-2 pt-1 rounded-cercle" alt="User Image">
@@ -21,11 +21,17 @@ if (isset($_SESSION['sa_crm_drs_id']) and $_SESSION['sa_crm_drs_id'] == true) {
     <li> <a href="index.php"> <i class="fa fa-dashboard"></i> <span class="nav-label"> DASHBOARD </span></a>
 
     </li>
-    <li> <a href="create.php"><i class="fa fa-external-link"></i> <span class="nav-label">ADD NEW FLAT</span></a> </li>
-    <li> <a href="allflatdata.php"><i class="fa fa-home"></i> <span class="nav-label">ALL FLAT</span></a> </li>
+    <li> <a href="create.php"><i class="fa fa-external-link"></i> <span class="nav-label">ADD NEW MANAGER</span></a> </li>
+    <li> <a href="allflatdata.php"><i class="fa fa-home"></i> <span class="nav-label">ALL MANAGER</span></a> </li>
 
-        
+
+    <li> <a href="add_new_flat.php"><i class="fa fa-external-link"></i> <span class="nav-label">ADD NEW FLAT</span></a> </li>
+    <li> <a href="all_flat_information.php"><i class="fa fa-home"></i> <span class="nav-label">FLAT INFORMATION</span></a> </li>
+
+
     <li> <a href="personal_expense.php"><i class="fa fa-home"></i> <span class="nav-label">PERSONAL EXPENSE</span></a> </li>
+    <li> <a href="add-expense.php"><i class="fa fa-home"></i> <span class="nav-label">MANAGER EXPENSE</span></a> </li>
+
 
     <li> <a href="add_new_assets.php"><i class="fa fa-home"></i> <span class="nav-label">ADD NEW ASSETS</span></a> </li>
 
@@ -49,8 +55,9 @@ if (isset($_SESSION['sa_crm_drs_id']) and $_SESSION['sa_crm_drs_id'] == true) {
       <ul class="sub-menu collapse" id="accounts-tables">
         <li><a href="accounts.php">ACCOUNTS</a></li>
         <!--<li><a href="collection.php">COLLECTIONS</a></li>-->
-        <li><a href="add-expense.php">ADD EXPENSE</a></li>
+        <!-- <li><a href="add-expense.php">ADD EXPENSE</a></li> -->
         <li><a href="monthly-coll.php">BILL REPORTS</a></li>
+        <li><a href="previeus_month_du.php">PREVIOUS MONTH DUE</a></li>
 
       </ul>
     </li>

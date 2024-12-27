@@ -87,7 +87,7 @@ function getFlatBillSummary($month, $year) {
       SELECT 
           fb.f_flatId,
           f.flatname,
-          f.flat_number,
+          f.owner_name,
           SUM(fb.f_total) AS total_collected,
           f_due
       FROM 
@@ -97,7 +97,7 @@ function getFlatBillSummary($month, $year) {
       WHERE 
           fb.f_month = '{$month}' AND fb.f_year = '{$year}' AND fb.f_status = 'Received'
       GROUP BY 
-          fb.f_flatId, f.flatname, f.flat_number, f.rent
+          fb.f_flatId, f.flatname
   ";
   $result = mysqli_query($conn, $query);
   if (!$result) {

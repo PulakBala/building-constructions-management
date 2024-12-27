@@ -7,7 +7,8 @@ $id = $_GET['id'] ?? null;
 
 $flat = []; // Initialize the flat array
 if ($id) {
-    $sql = "SELECT * FROM flats WHERE id = '$id'";
+    // Fetch data for the selected flat
+    $sql = "SELECT * FROM flat_info WHERE id = '$id'";
     $result = mysqli_query($conn, $sql);
     $flat = mysqli_fetch_assoc($result);
 }
@@ -15,20 +16,28 @@ if ($id) {
 $updateSuccessful = false; // Flag to check if the update was successful
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $owner = $_POST['owner'];
-    $flatname = $_POST['flatname'];
-    $tel = $_POST['tel'];
-    $optional_number = $_POST['optional_number'];
-    $flatno = $_POST['flatno'];
+    // Collect form data
+    $owner_name = $_POST['owner_name'];
+    $mobile_number = $_POST['mobile_number'];
     $rent = $_POST['rent'];
     $advance = $_POST['advance'];
-    $updateQuery = "UPDATE flats SET owner_name='$owner', flatname='$flatname', mobile_number='$tel', optional_number='$optional_number', flat_number='$flatno', rent='$rent', advance='$advance' WHERE id='$id'";
+    $nid_number = $_POST['nid_number'];
+
+    // Update query
+    $updateQuery = "UPDATE flat_info 
+                    SET name = '$owner_name', 
+                        mobile_number = '$mobile_number', 
+                        rent = '$rent', 
+                        advance = '$advance',
+                        nid_number = '$nid_number'
+                    WHERE id = '$id'";
+
     if (mysqli_query($conn, $updateQuery)) {
         $_SESSION['message'] = "Flat updated successfully!";
         $_SESSION['msg_type'] = "success";
         $updateSuccessful = true; // Set flag to true on successful update
     } else {
-        $_SESSION['message'] = "Error updating flat.";
+        $_SESSION['message'] = "Error updating flat: " . mysqli_error($conn);
         $_SESSION['msg_type'] = "error";
     }
 }
@@ -38,47 +47,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <div class="container-fluid">
     <div class="row">
       <div class="form-group col-md-12">
-          <section class="">
-            <div class="content">
-                <div class="contact-form-wrapper">
-                    <form class="form p-5 shadow-lg rounded" method="POST">
-                        <!-- Notification message display -->
-                    <?php if (isset($_SESSION['message'])): ?>
-                        <div class="alert alert-<?= $_SESSION['msg_type'] ?> text-center" id="notification">
-                            <?= htmlspecialchars($_SESSION['message']) ?>
-                            <?php unset($_SESSION['message']); ?> <!-- Clear message after displaying -->
-                        </div>
-                    <?php endif; ?>
-                        <h2 class="text-center mb-4">EDIT AND UPDATE</h2>
-                        <div class="mb-3">
-                          <input type="text" name="owner" class="form-control" value="<?= $updateSuccessful ? htmlspecialchars($owner) : htmlspecialchars($flat['owner_name']) ?>" required>
-                        </div>
-                        <div class="mb-3">
-                          <input type="text" name="flatname" class="form-control" value="<?= $updateSuccessful ? htmlspecialchars($flatname) : htmlspecialchars($flat['flatname']) ?>" required>
-                        </div>
-                        
-                        <div class="mb-3">
-                          <input type="tel" name="tel" class="form-control" value="<?= $updateSuccessful ? htmlspecialchars($tel) : htmlspecialchars($flat['mobile_number']) ?>" required>
-                        </div>
-                        <div class="mb-3">
-                          <input type="text" name="optional_number" class="form-control" value="<?= $updateSuccessful ? htmlspecialchars($optional_number) : htmlspecialchars($flat['optional_number']) ?>" required>
-                        </div>
-                        <div class="mb-3">
-                          <input type="text" name="flatno" class="form-control" value="<?= $updateSuccessful ? htmlspecialchars($flatno) : htmlspecialchars($flat['flat_number']) ?>" required>
-                        </div>
-                        <div class="mb-3">
-                          <input type="number" step="0.01" name="rent" class="form-control" value="<?= $updateSuccessful ? htmlspecialchars($rent) : htmlspecialchars($flat['rent']) ?>" required>
-                        </div>
-                        <div class="mb-3">
-                          <input type="number" step="0.01" name="advance" class="form-control" value="<?= $updateSuccessful ? htmlspecialchars($advance) : htmlspecialchars($flat['advance']) ?>" required>
-                        </div>
-                        <div class="text-center">
-                          <button type="submit" class="btn btn-primary w-100">Update</button>
-                        </div>
-                    </form>
+        <section class="">
+          <div class="content">
+            <div class="contact-form-wrapper">
+              <form class="form p-5 shadow-lg rounded" method="POST">
+                <!-- Notification message display -->
+                <?php if (isset($_SESSION['message'])): ?>
+                  <div class="alert alert-<?= $_SESSION['msg_type'] ?> text-center" id="notification">
+                      <?= htmlspecialchars($_SESSION['message']) ?>
+                      <?php unset($_SESSION['message']); ?> <!-- Clear message after displaying -->
+                  </div>
+                <?php endif; ?>
+                <h2 class="text-center mb-4">Update Flat Info</h2>
+
+                <div class="mb-3">
+                  <label for="owner_name">Owner Name</label>
+                  <input type="text" name="owner_name" class="form-control" value="<?= htmlspecialchars($flat['name'] ?? '') ?>" required>
                 </div>
-              </div>
-          </section>
+
+                <div class="mb-3">
+                  <label for="mobile_number">Mobile Number</label>
+                  <input type="tel" name="mobile_number" class="form-control" value="<?= htmlspecialchars($flat['mobile_number'] ?? '') ?>" required>
+                </div>
+
+                <div class="mb-3">
+                  <label for="rent">Rent (in decimal)</label>
+                  <input type="number" step="0.01" name="rent" class="form-control" value="<?= htmlspecialchars($flat['rent'] ?? '') ?>" required>
+                </div>
+
+                <div class="mb-3">
+                  <label for="advance">Advance (in decimal)</label>
+                  <input type="number" step="0.01" name="advance" class="form-control" value="<?= htmlspecialchars($flat['advance'] ?? '') ?>" required>
+                </div>
+
+                <div class="mb-3">
+                  <label for="flat_number">Nid Number</label>
+                  <input type="text" name="nid_number" class="form-control" value="<?= htmlspecialchars($flat['nid_number'] ?? '') ?>" required>
+                </div>
+
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary w-100">Update</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   </div>
