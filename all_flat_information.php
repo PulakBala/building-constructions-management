@@ -27,27 +27,27 @@
         <div class="card-container">
           <?php
 
-          $sqlSelect = "SELECT * FROM flats";
+          $sqlSelect = "SELECT * FROM flat_info";
           $result = mysqli_query($conn, $sqlSelect);
 
           $flat = mysqli_fetch_assoc($result);
           if ($flat) {
-            $ownerName = htmlspecialchars($flat['owner_name']);
-            $flatName = htmlspecialchars($flat['flatname']);
+            // $ownerName = htmlspecialchars($flat['owner_name']);
+            // $flatName = htmlspecialchars($flat['flatname']);
             // $flatNumber = htmlspecialchars($flat['flat_number']);
             $mobileNumber = htmlspecialchars($flat['mobile_number']);
-            $optionalNumber = htmlspecialchars($flat['optional_number']);
-            // $rent = htmlspecialchars($flat['rent']);
-            // $advance = htmlspecialchars($flat['advance']);
+            // $optionalNumber = htmlspecialchars($flat['optional_number']);
+            $rent = htmlspecialchars($flat['rent']);
+            $advance = htmlspecialchars($flat['advance']);
           } else {
             // Handle the case where the flat is not found
-            $ownerName = 'Not Found';
-            $flatName = 'Not Found';
-        
+            // $ownerName = 'Not Found';
+            // $flatName = 'Not Found';
+            // $flatNumber = 'Not Found';
             $mobileNumber = 'Not Found';
-            $optionalNumber = 'Not Found';
-         
-            
+            // $optionalNumber = 'Not Found';
+            $rent = 'Not Found';
+            $advance = 'Not Found';
           }
 
 
@@ -58,29 +58,44 @@
               <div class="card-body p-4 shadow-lg rounded" style="background-color: #f8f9fa;">
                 <h5 class="card-title">
                   <span class="fw-bold" style="color: #3498db;">Name:</span>
-                  <span class="text-muted"><?php echo $data["owner_name"]; ?></span>
+                  <span class="text-muted"><?php echo $data["name"]; ?></span>
                 </h5>
                 <hr>
+
+
                 <p class="card-text">
-                  <span class="fw-bold" style="color: #e74c3c;">Building Name:</span>
-                  <span class="text-muted"><?php echo $data["flatname"]; ?></span>
+                  <span class="fw-bold" style="color: #e74c3c;">Rent:</span>
+                  <span class="text-muted"><?php echo $data["rent"]; ?></span>
                 </p>
 
+                <p class="card-text">
+                  <span class="fw-bold" style="color: #e74c3c;">Advance:</span>
+                  <span class="text-muted"><?php echo $data["advance"]; ?></span>
+                </p>
 
                 <p class="card-text">
                   <span class="fw-bold" style="color: #2ecc71;">Mobile Number:</span>
                   <span class="text-muted"><?php echo $data["mobile_number"]; ?></span>
                 </p>
-               
-                <p class="card-text">
-                  <span class="fw-bold" style="color: #2ecc71;">Optional Number:</span>
-                  <span class="text-muted"><?php echo $data["optional_number"]; ?></span>
-                </p>
-                
 
+
+                <p class="card-text">
+                  <span class="fw-bold" style="color: #e67e22;">NID Number:</span>
+                  <span class="text-muted"><?php echo $data["nid_number"]; ?></span>
+                </p>
+
+                <p class="card-text">
+                  <span class="fw-bold" style="color: #e67e22;">NID Image:</span>
+                  <span class="text-muted"><a href="<?php echo $data["nid_img"]; ?>" target="_blank">View Image</a></span>
+                </p>
+
+                <p class="card-text">
+                  <span class="fw-bold" style="color: #e67e22;">Date:</span>
+                  <span class="text-muted"><?php echo $data["created_at"]; ?></span>
+                </p>
                 <!-- edit and delete button  -->
-                <a href="edit_manager.php?id=<?php echo $data['id']; ?>" class="btn btn-warning btn-sm">Edit</a>
-                <a href="flat-details.php?id=<?php echo $data["id"]; ?>" class="btn btn-info btn-sm">Add Bill</a>
+                <a href="edit-flat.php?id=<?php echo $data['id']; ?>" class="btn btn-warning btn-sm">Edit</a>
+                <a href="delete_flat_info.php?id=<?php echo $data['id']; ?>" class="btn btn-info btn-sm">Delete</a>
 
               </div>
             </div>

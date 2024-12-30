@@ -29,9 +29,9 @@
                             $ownerName = htmlspecialchars($flat['owner_name']);
                             $mobileNumber = htmlspecialchars($flat['mobile_number']);
                             $flatName = htmlspecialchars($flat['flatname']);
-                            $flatNumber = htmlspecialchars($flat['flat_number']);
-                            $rent = htmlspecialchars($flat['rent']);
-                            $advance = htmlspecialchars($flat['advance']);
+                            // $flatNumber = htmlspecialchars($flat['flat_number']);
+                            // $rent = htmlspecialchars($flat['rent']);
+                            // $advance = htmlspecialchars($flat['advance']);
                         } else {
                             // Handle case where flat is not found
                             $ownerName = 'Flat not found';
@@ -55,15 +55,15 @@
                     <div class="container mt-4">
                         <div class=" d-flex justify-content-center mb-5">
                             <div>
-                                <p><strong>Owner Name:</strong> <?php echo $ownerName; ?></p>
+                                <p><strong>Manager Name:</strong> <?php echo $ownerName; ?></p>
                                 <p><strong>Mobile Number:</strong> <?php echo $mobileNumber; ?></p>
-                                <p><strong>Flat Name:</strong> <?php echo $flatName; ?></p>
+                                <p><strong>Building Name:</strong> <?php echo $flatName; ?></p>
                             </div>
-                            <div class="ml-5">
+                            <div class="ml-5" style="display: none;">
                                 <p><strong>Flat No:</strong> <?php echo $flatNumber; ?></p>
                                 <p><strong>Rent:</strong> <?php echo $rent; ?></p>
                                 <p><strong>Advance:</strong> <?php echo $advance; ?></p>
-                            </div>
+                            </div>  
                         </div>
                         <form action="invoice.php" method="get">
                             <input type="hidden" name="flatId" value="<?php echo $flatId; ?>">
@@ -83,7 +83,59 @@
                                     <input type="number" id="flatRent" name="flatRent" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($internetBill); ?>">
                                 </div>
                             </div>
+
+
                             <div class="form-section">
+                                <h5>2. Current Bill</h5>
+
+                                <div class="form-row">
+                                    <label for="commonBill">Current Bill</label>
+                                    <input type="number" id="commonBill" name="commonBill" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($internetBill); ?>">
+                                </div>
+                            </div>
+
+                            
+                            <div class="form-section">
+                                <h5>3. Sallary</h5>
+                                <div class="form-row" style="display: none;">
+                                    <label for="centerRent">Rent</label>
+                                    <input type="number" id="centerRent" name="centerRent" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($internetBill); ?>">
+                                </div>
+                                <div class="form-row">
+                                    <label for="guardBill">Guard Sallary</label>
+                                    <input type="number" id="guardBill" name="guardBill" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($centerVarious); ?>">
+                                </div>
+                            </div>
+
+
+                            
+                            <div class="form-section">
+                                <h5>4. Other expense</h5>
+                                <div class="form-row" style="display: none;">
+                                    <label for="centerRent">Rent</label>
+                                    <input type="number" id="centerRent" name="centerRent" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($internetBill); ?>">
+                                </div>
+                                <div class="form-row">
+                                    <label for="centerVarious">Other Charges</label>
+                                    <input type="number" id="centerVarious" name="centerVarious" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($centerVarious); ?>">
+                                </div>
+                            </div>
+
+
+                            <div class="form-section">
+                                <h5>5. Flat</h5>
+                                <div class="form-row">
+                                    <label for="details">Details</label>
+                                    <input type="text" id="details" name="details" class="form-control" placeholder="Note">
+                                </div>
+                                <div class="form-row">
+                                    <label for="emptyFlatBill">Empty Flat </label>
+                                    <input type="number" id="emptyFlatBill" name="emptyFlatBill" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($centerVarious); ?>">
+                                </div>
+                            </div>
+
+
+                            <div class="form-section" style="display: none;">
                                 <h5>2. Internet Bill</h5>
 
                                 <div class="form-row">
@@ -93,7 +145,7 @@
                             </div>
 
 
-                            <div class="form-section">
+                            <div class="form-section" style="display: none;">
                                 <h5>3. Dish Bill</h5>
 
                                 <div class="form-row">
@@ -102,7 +154,7 @@
                                 </div>
                             </div>
 
-                            <div class="form-section">
+                            <div class="form-section" style="display: none;">
 
                                 <h5>4. Monthly Services Charge</h5>
 
@@ -114,50 +166,11 @@
 
 
                             </div>
-                            <div class="form-section">
-                                <h5>5. Current Bill</h5>
 
-                                <div class="form-row">
-                                    <label for="commonBill">Current Bill</label>
-                                    <input type="number" id="commonBill" name="commonBill" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($internetBill); ?>">
-                                </div>
-                            </div>
 
-                            <div class="form-section">
-                                <h5>6. Sallary</h5>
-                                <div class="form-row" style="display: none;">
-                                    <label for="centerRent">Rent</label>
-                                    <input type="number" id="centerRent" name="centerRent" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($internetBill); ?>">
-                                </div>
-                                <div class="form-row">
-                                    <label for="guardBill">Guard Sallary</label>
-                                    <input type="number" id="guardBill" name="guardBill" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($centerVarious); ?>">
-                                </div>
-                            </div>
 
-                            <div class="form-section">
-                                <h5>7. Flat</h5>
-                                <div class="form-row" style="display: none;">
-                                    <label for="centerRent">Rent</label>
-                                    <input type="number" id="centerRent" name="centerRent" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($internetBill); ?>">
-                                </div>
-                                <div class="form-row">
-                                    <label for="emptyFlatBill">Empty Flat </label>
-                                    <input type="number" id="emptyFlatBill" name="emptyFlatBill" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($centerVarious); ?>">
-                                </div>
-                            </div>
 
-                            <div class="form-section">
-                                <h5>8. Other expense</h5>
-                                <div class="form-row" style="display: none;">
-                                    <label for="centerRent">Rent</label>
-                                    <input type="number" id="centerRent" name="centerRent" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($internetBill); ?>">
-                                </div>
-                                <div class="form-row">
-                                    <label for="centerVarious">Other Charges</label>
-                                    <input type="number" id="centerVarious" name="centerVarious" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($centerVarious); ?>">
-                                </div>
-                            </div>
+
                             <div class="form-section" style="display: none;">
                                 <h5>8. Rooftop Room Rent</h5>
 
@@ -180,7 +193,7 @@
 
 
                             <div class="form-section">
-                                <h5>9. Select Month and Year</h5>
+                                <h5>6. Select Month and Year</h5>
                                 <div class="form-row">
                                     <label for="month1">Select Month</label>
                                     <select id="month1" name="month1" class="form-control">

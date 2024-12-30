@@ -24,6 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $centerRent = isset($_GET['centerRent']) ? floatval($_GET['centerRent']) : 0;
     $centerVarious = isset($_GET['centerVarious']) ? floatval($_GET['centerVarious']) : 0;
     $guardBill = isset($_GET['guardBill']) ? floatval($_GET['guardBill']) : 0;
+    $details = isset($_GET['details']) ? htmlspecialchars($_GET['details']) : '';
     $emptyFlatBill = isset($_GET['emptyFlatBill']) ? floatval($_GET['emptyFlatBill']) : 0;
     $atticRent = isset($_GET['atticRent']) ? floatval($_GET['atticRent']) : 0;
     $donation = isset($_GET['donation']) ? floatval($_GET['donation']) : 0;
@@ -78,29 +79,22 @@ Sobarmart , Tongi , Gazipur
         die();
     }
 
-    $query = "SELECT COUNT(f_id) as `num` FROM flat_bill where f_month = '{$selectedMonth}'  AND  f_year = '{$selectedYear}' AND f_flatId = '{$flatId}' ";
-    $row = mysqli_fetch_array(mysqli_query($conn, $query));
-    $total = $row['num'];
-    if ($total > 0) {
-        // echo 'Alreaday ';
+    // Step 1: Get the last invoice number
+    $query = "SELECT MAX(f_invoice_number) as last_invoice FROM flat_bill";
+    $result = mysqli_query($conn, $query);
+    $row = mysqli_fetch_array($result);
+    $lastInvoiceNumber = $row['last_invoice'] ? $row['last_invoice'] : 0;
+    $newInvoiceNumber = $lastInvoiceNumber + 1; // Increment the last invoice number
+
+    $sql = "INSERT INTO flat_bill (f_date, f_month, f_year, f_service_charge, f_int_bill, f_dish_bill, f_flat_rent, f_c_current_bill, f_c_center_rent, f_guard_slry, f_empty_flat, f_c_center_various, f_atic_rent, f_d_donation, f_d_various_charge, f_status, f_flatId,f_total, f_invoice_number, f_details) 
+    VALUES (NOW(), '$selectedMonth', '$selectedYear', $serviceCharge, $internetBill, $dishBill, $flatRent, $commonBill, $centerRent, $guardBill, $emptyFlatBill, $centerVarious, $atticRent, $donation, $developmentVarious, 'Pending',$flatId,$totalAmount, $newInvoiceNumber, '$details')";
+
+    // Execute SQL statement
+    if ($conn->query($sql) === TRUE) {
+        echo "Record inserted successfully.";
+        // sendGSMS('8809617620596', $mobileNumber, $msg, 'C200022562c68264972b36.87730554', 'text&contacts');
     } else {
-        // Step 1: Get the last invoice number
-        $query = "SELECT MAX(f_invoice_number) as last_invoice FROM flat_bill";
-        $result = mysqli_query($conn, $query);
-        $row = mysqli_fetch_array($result);
-        $lastInvoiceNumber = $row['last_invoice'] ? $row['last_invoice'] : 0;
-        $newInvoiceNumber = $lastInvoiceNumber + 1; // Increment the last invoice number
-
-        $sql = "INSERT INTO flat_bill (f_date, f_month, f_year, f_service_charge, f_int_bill, f_dish_bill, f_flat_rent, f_c_current_bill, f_c_center_rent, f_guard_slry, f_empty_flat, f_c_center_various, f_atic_rent, f_d_donation, f_d_various_charge, f_status, f_flatId,f_total, f_invoice_number) 
-    VALUES (NOW(), '$selectedMonth', '$selectedYear', $serviceCharge, $internetBill, $dishBill, $flatRent, $commonBill, $centerRent, $guardBill, $emptyFlatBill, $centerVarious, $atticRent, $donation, $developmentVarious, 'Pending',$flatId,$totalAmount, $newInvoiceNumber)";
-
-        // Execute SQL statement
-        if ($conn->query($sql) === TRUE) {
-            echo "Record inserted successfully.";
-            sendGSMS('8809617620596', $mobileNumber, $msg, 'C200022562c68264972b36.87730554', 'text&contacts');
-        } else {
-            echo "Error: " . $sql . "<br>" . $conn->error;
-        }
+        echo "Error: " . $sql . "<br>" . $conn->error;
     }
 
     // Ensure $newInvoiceNumber is defined before using it
@@ -290,6 +284,3 @@ Sobarmart , Tongi , Gazipur
         }
     }
 }
-
-
-

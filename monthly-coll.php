@@ -1,3 +1,4 @@
+<?php ob_start(); ?>
 <?php include('connection.php'); ?>
 <?php include('header.php'); ?>
 <?php include('sidebar.php'); ?>
@@ -13,18 +14,18 @@
             $id = $_POST['id'];
             $typ = $_POST['typ'];
             $paid_amount = isset($_POST['paid_amount']) ? floatval($_POST['paid_amount']) : 0;
-            if (isset($_POST['mobile_number'])) {
-              $mobile_number = $_POST['mobile_number'];
-              $f_total = $_POST['f_total'];
-              $f_month = $_POST['f_month'];
-              $f_year = $_POST['f_year'];
-              $f_due = $f_total - $paid_amount;
+            // if (isset($_POST['mobile_number'])) {
+            //   $mobile_number = $_POST['mobile_number'];
+            //   $f_total = $_POST['f_total'];
+            //   $f_month = $_POST['f_month'];
+            //   $f_year = $_POST['f_year'];
+            //   $f_due = $f_total - $paid_amount;
 
-              $msg = 'Bill Paid ৳' . number_format($paid_amount, 2) . ' for ' . $f_month . '-' . $f_year . 
-                     '. Due amount: ৳' . number_format($f_due, 2);
-              
-              sendGSMS('8809617620596', $mobile_number, $msg, 'C200022562c68264972b36.87730554', 'text&contacts');
-            }
+            //   $msg = 'Bill Paid ৳' . number_format($paid_amount, 2) . ' for ' . $f_month . '-' . $f_year .
+            //     '. Due amount: ৳' . number_format($f_due, 2);
+
+            //   sendGSMS('8809617620596', $mobile_number, $msg, 'C200022562c68264972b36.87730554', 'text&contacts');
+            // }
             $updateQuery = "UPDATE flat_bill 
                            SET f_status = ?, 
                                f_paid_amount = ?, 
@@ -59,9 +60,9 @@
 
           // {{ edit_2 }}: Modify the query to filter by month and year if provided
           if (isset($_GET['month']) && isset($_GET['year'])) {
-              $month = $_GET['month'];
-              $year = $_GET['year'];
-              $fetchQuery .= " WHERE f_month = '$month' AND f_year = '$year'";
+            $month = $_GET['month'];
+            $year = $_GET['year'];
+            $fetchQuery .= " WHERE f_month = '$month' AND f_year = '$year'";
           }
           // {{ edit_2 }} end
 
@@ -101,24 +102,22 @@
                               </form>
                             </div>
                           </div>";
-                    // {{ edit_1 }} end
+          // {{ edit_1 }} end
           echo "<table class='table table-bordered table-hover'>";
           echo "<thead  class='thead-dark'>
             <tr>
-                <th>Owner</th>
-                <th>Flat</th>
+                <th>Manager</th>
+                <th>Building</th>
                 <th>Month</th>
                 <th>Year</th>
 
 
                 <th>Flat&nbsp;Rent</th>
-                <th>Net&nbsp;Bill</th>
-                <th>Dish&nbsp;Bill</th>
-                <th>Service&nbsp;Charge</th>
+               
                 <th>Current&nbsp;Bill</th>
                 <th>Guard&nbsp;Sallary</th>
-                <th>Empty&nbsp;Flat</th>
                 <th>Other&nbsp;Expense</th>
+                <th>Empty&nbsp;Flat</th>
 
                 
                 <th>Total</th>
@@ -137,17 +136,14 @@
             echo "<tr>
               
               <td>" . htmlspecialchars($row['owner_name']) . "</td>
-              <td>" . htmlspecialchars($row['flat_number']) . "</td>
+              <td>" . htmlspecialchars($row['flatname']) . "</td>
               <td>" . htmlspecialchars($row['f_month']) . "</td>
               <td>" . htmlspecialchars($row['f_year']) . "</td>
               <td>৳" . number_format($row['f_flat_rent'], 0,) . "</td>
-              <td>৳" . number_format($row['f_int_bill'], 0,) . "</td>
-              <td>৳" . number_format($row['f_dish_bill'], 0,) . "</td>
-              <td>৳" . number_format($row['f_service_charge'], 0) . "</td>
               <td>৳" . number_format($row['f_c_current_bill'], 0,) . "</td>
              <td>৳" . number_format($row['f_guard_slry'], 0,) . "</td>
+             <td>৳" . number_format($row['f_c_center_various'], 0,) . "</td>
              <td>৳" . number_format($row['f_empty_flat'], 0,) . "</td>
-              <td>৳" . number_format($row['f_c_center_various'], 0,) . "</td>
 
               <td>৳" . number_format($row['f_total'], 0,) . "</td>
               <td>" . $f_status . "</td>

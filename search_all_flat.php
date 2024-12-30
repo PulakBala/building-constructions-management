@@ -4,7 +4,7 @@
 
 if (isset($_POST['query'])) {
     $search = mysqli_real_escape_string($conn, $_POST['query']);
-    $query = "SELECT * FROM flats WHERE owner_name LIKE '%$search%' OR flat_number LIKE '%$search%' OR mobile_number LIKE '%$search%' OR optional_number LIKE '%$search%'";
+    $query = "SELECT * FROM flats WHERE owner_name LIKE '%$search%' OR mobile_number LIKE '%$search%' OR optional_number LIKE '%$search%'";
   
     $result = mysqli_query($conn, $query);
     
@@ -28,10 +28,7 @@ if (isset($_POST['query'])) {
                         <span class="text-muted">' . htmlspecialchars($row['optional_number']) . '</span>
                     </p>
   
-                    <p class="card-text">
-                        <span class="fw-bold" style="color: #e74c3c;">Flat No:</span>
-                        <span class="text-muted">' . htmlspecialchars($row['flat_number']) . '</span>
-                    </p>
+
                     <a href="edit-flat.php?id=' . $row['id'] . '" class="btn btn-warning btn-sm">Edit</a>
                     <a href="flat-details.php?id=' . $row['id'] . '" class="btn btn-info btn-sm">Add Bill</a>
                 </div>

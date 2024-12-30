@@ -1,13 +1,20 @@
 <?php include('connection.php');
 //echo sha1('dst##89##');
+// $new_password = '@sobarmart#25#'
+$stored_hashed_password = '3301e17c04255de032af4e03e1432cb6d6e12bdb'; // '@sobarmart#25#' এর হ্যাশ
 if(isset($_POST['subb'])){
-$username = $_POST['username'];
-$password = sha1($_POST['password']);
-if($username == 'sobarmart' AND $password == '2a48b41b4240815e0221e851de3087a428295b17'){
-$_SESSION['sa_crm_drs_id'] = true;	
-header("Location: index.php");
-}
+    $username = $_POST['username'];
+    $input_password = $_POST['password']; // ইনপুট করা পাসওয়ার্ড
+    $hashed_input_password = sha1($input_password); // ইনপুট পাসওয়ার্ডের হ্যাশ তৈরি করুন
 
+    // যাচাই করুন: username এবং hashed password মিলছে কিনা
+    if($username == 'sobarmart' AND $hashed_input_password == $stored_hashed_password){
+        $_SESSION['sa_crm_drs_id'] = true;	
+        header("Location: index.php");
+        exit; // নিশ্চিত করুন যে কোনো আউটপুট এখানে বন্ধ থাকবে
+    } else {
+        echo "<script>alert('Invalid Username or Password!');</script>";
+    }
 }
 ?>
 <?php include('header.php') ?>
