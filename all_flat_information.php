@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php 
   include('connection.php');
   include('header.php');
@@ -11,6 +12,15 @@
 ?>
 
 <main class="page-content">
+=======
+<?php include('connection.php') ?>
+<?php include('header.php') ?>
+<?php include('sidebar.php') ?>
+
+
+<main class="page-content">
+
+>>>>>>> dbaf912d9b83dcc0883e4b5438ac0d7dc113fdf9
   <div class="container-fluid">
     <div class="row">
       <section class="container my-4">
@@ -30,6 +40,7 @@
         <!-- Search Results will appear here -->
         <div id="searchResults" class="my-4"></div>
 
+<<<<<<< HEAD
         <div class="">
           <?php
           // Fetch data based on the building_name
@@ -91,15 +102,102 @@
               }
           } else {
               echo "<p class='text-center text-muted'>No data found for the selected building!</p>";
+=======
+        <div class="card-container">
+          <?php
+
+          $sqlSelect = "SELECT * FROM flat_info";
+          $result = mysqli_query($conn, $sqlSelect);
+
+          $flat = mysqli_fetch_assoc($result);
+          if ($flat) {
+            // $ownerName = htmlspecialchars($flat['owner_name']);
+            // $flatName = htmlspecialchars($flat['flatname']);
+            // $flatNumber = htmlspecialchars($flat['flat_number']);
+            $mobileNumber = htmlspecialchars($flat['mobile_number']);
+            // $optionalNumber = htmlspecialchars($flat['optional_number']);
+            $rent = htmlspecialchars($flat['rent']);
+            $advance = htmlspecialchars($flat['advance']);
+          } else {
+            // Handle the case where the flat is not found
+            // $ownerName = 'Not Found';
+            // $flatName = 'Not Found';
+            // $flatNumber = 'Not Found';
+            $mobileNumber = 'Not Found';
+            // $optionalNumber = 'Not Found';
+            $rent = 'Not Found';
+            $advance = 'Not Found';
+          }
+
+
+          while ($data = mysqli_fetch_array($result)) {
+          ?>
+
+            <div class="card">
+              <div class="card-body p-4 shadow-lg rounded" style="background-color: #f8f9fa;">
+                <h5 class="card-title">
+                  <span class="fw-bold" style="color: #3498db;">Name:</span>
+                  <span class="text-muted"><?php echo $data["name"]; ?></span>
+                </h5>
+                <hr>
+
+
+                <p class="card-text">
+                  <span class="fw-bold" style="color: #e74c3c;">Rent:</span>
+                  <span class="text-muted"><?php echo $data["rent"]; ?></span>
+                </p>
+
+                <p class="card-text">
+                  <span class="fw-bold" style="color: #e74c3c;">Advance:</span>
+                  <span class="text-muted"><?php echo $data["advance"]; ?></span>
+                </p>
+
+                <p class="card-text">
+                  <span class="fw-bold" style="color: #2ecc71;">Mobile Number:</span>
+                  <span class="text-muted"><?php echo $data["mobile_number"]; ?></span>
+                </p>
+
+
+                <p class="card-text">
+                  <span class="fw-bold" style="color: #e67e22;">NID Number:</span>
+                  <span class="text-muted"><?php echo $data["nid_number"]; ?></span>
+                </p>
+
+                <p class="card-text">
+                  <span class="fw-bold" style="color: #e67e22;">NID Image:</span>
+                  <span class="text-muted"><a href="<?php echo $data["nid_img"]; ?>" target="_blank">View Image</a></span>
+                </p>
+
+                <p class="card-text">
+                  <span class="fw-bold" style="color: #e67e22;">Date:</span>
+                  <span class="text-muted"><?php echo $data["created_at"]; ?></span>
+                </p>
+                <!-- edit and delete button  -->
+                <a href="edit-flat.php?id=<?php echo $data['id']; ?>" class="btn btn-warning btn-sm">Edit</a>
+
+                <a href="delete_flat_info.php?id=<?php echo $data['id']; ?>" class="btn btn-info btn-sm">Delete</a>
+
+              </div>
+            </div>
+
+          <?php
+>>>>>>> dbaf912d9b83dcc0883e4b5438ac0d7dc113fdf9
           }
           ?>
         </div>
       </section>
     </div>
+<<<<<<< HEAD
   </div>
 </main>
 
 <?php include('footer.php'); ?>
+=======
+
+  </div>
+</main>
+<?php include('footer.php') ?>
+>>>>>>> dbaf912d9b83dcc0883e4b5438ac0d7dc113fdf9
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
@@ -123,4 +221,8 @@
       }
     });
   });
+<<<<<<< HEAD
 </script>
+=======
+</script>
+>>>>>>> dbaf912d9b83dcc0883e4b5438ac0d7dc113fdf9

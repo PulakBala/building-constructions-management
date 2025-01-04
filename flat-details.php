@@ -83,6 +83,12 @@
                                     <input type="number" id="flatRent" name="flatRent" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($internetBill); ?>">
                                 </div>
                             </div>
+<<<<<<< HEAD
+
+
+                            <div class="form-section">
+                                <h5>2. Current Bill</h5>
+=======
 
 
                             <div class="form-section">
@@ -166,6 +172,87 @@
 
 
                             </div>
+>>>>>>> dbaf912d9b83dcc0883e4b5438ac0d7dc113fdf9
+
+
+<<<<<<< HEAD
+                            
+                            <div class="form-section">
+                                <h5>3. Sallary</h5>
+                                <div class="form-row" style="display: none;">
+                                    <label for="centerRent">Rent</label>
+                                    <input type="number" id="centerRent" name="centerRent" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($internetBill); ?>">
+                                </div>
+                                <div class="form-row">
+                                    <label for="guardBill">Guard Sallary</label>
+                                    <input type="number" id="guardBill" name="guardBill" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($centerVarious); ?>">
+                                </div>
+                            </div>
+
+
+                            
+                            <div class="form-section">
+                                <h5>4. Other expense</h5>
+                                <div class="form-row" style="display: none;">
+                                    <label for="centerRent">Rent</label>
+                                    <input type="number" id="centerRent" name="centerRent" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($internetBill); ?>">
+                                </div>
+                                <div class="form-row">
+                                    <label for="centerVarious">Other Charges</label>
+                                    <input type="number" id="centerVarious" name="centerVarious" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($centerVarious); ?>">
+                                </div>
+                            </div>
+
+
+                            <div class="form-section">
+                                <h5>5. Flat</h5>
+                                <div class="form-row">
+                                    <label for="details">Details</label>
+                                    <input type="text" id="details" name="details" class="form-control" placeholder="Note">
+                                </div>
+                                <div class="form-row">
+                                    <label for="emptyFlatBill">Empty Flat </label>
+                                    <input type="number" id="emptyFlatBill" name="emptyFlatBill" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($centerVarious); ?>">
+                                </div>
+                            </div>
+
+
+                            <div class="form-section" style="display: none;">
+                                <h5>2. Internet Bill</h5>
+
+                                <div class="form-row">
+                                    <label for="internetBill">Internet Bill</label>
+                                    <input type="number" id="internetBill" name="internetBill" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($internetBill); ?>">
+                                </div>
+                            </div>
+
+
+                            <div class="form-section" style="display: none;">
+                                <h5>3. Dish Bill</h5>
+
+                                <div class="form-row">
+                                    <label for="dishBill">Dish Bill</label>
+                                    <input type="number" id="dishBill" name="dishBill" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($internetBill); ?>">
+                                </div>
+                            </div>
+
+                            <div class="form-section" style="display: none;">
+
+                                <h5>4. Monthly Services Charge</h5>
+
+                                <div class="form-row">
+                                    <label for="serviceCharge">Services Charge</label>
+                                    <input type="number" id="serviceCharge" name="serviceCharge" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($serviceCharge); ?>">
+                                </div>
+
+
+
+                            </div>
+=======
+
+
+
+>>>>>>> dbaf912d9b83dcc0883e4b5438ac0d7dc113fdf9
                             <div class="form-section" style="display: none;">
                                 <h5>8. Rooftop Room Rent</h5>
 

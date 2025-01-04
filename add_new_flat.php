@@ -6,12 +6,15 @@
 // Initialize a success message variable
 $successMessage = '';
 
+<<<<<<< HEAD
 if (isset($_GET['name'])) {
   $bulding_name = htmlspecialchars($_GET['name']); // Use htmlspecialchars for security
 
 }
 
 
+=======
+>>>>>>> dbaf912d9b83dcc0883e4b5438ac0d7dc113fdf9
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $tel = $_POST['tel'] ?? null;
   // $flatno = $_POST['flatno'] ?? null;
@@ -22,7 +25,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $nid_img = $_POST['nid_img'] ?? null;
 
   if ($tel && $nid_number) {
+<<<<<<< HEAD
     $query = "INSERT INTO flat_info(bulding_name, name, mobile_number, rent, advance, nid_number, nid_img) VALUES('$bulding_name', '$name', '$tel', '$rent', '$advance', '$nid_number', '$nid_img')";
+=======
+    $query = "INSERT INTO flat_info(name, mobile_number, rent, advance, nid_number, nid_img) VALUES('$name', '$tel', '$rent', '$advance', '$nid_number', '$nid_img')";
+>>>>>>> dbaf912d9b83dcc0883e4b5438ac0d7dc113fdf9
     if ($conn->query($query) === TRUE) {
       $successMessage = "New flat added successfully!";
     } else {
@@ -45,10 +52,13 @@ $conn->close();
         <?php endif; ?>
         <h2 class="text-center mb-4 text-uppercase" style="letter-spacing: 2px; color: #3498db;">ADD NEW FLAT</h2>
 
+<<<<<<< HEAD
         <div class="mb-3">
           <input type="text" name="buildingName" class="form-control" placeholder="Building Name" value="<?php echo isset($bulding_name) ? $bulding_name : ''; ?>" readonly>
         </div>
 
+=======
+>>>>>>> dbaf912d9b83dcc0883e4b5438ac0d7dc113fdf9
 
         <div class="mb-3">
           <input type="number" name="rent" class="form-control" placeholder="Rent" required>

@@ -25,12 +25,21 @@ if (isset($_SESSION['sa_crm_drs_id']) and $_SESSION['sa_crm_drs_id'] == true) {
     <li> <a href="allflatdata.php"><i class="fa fa-home"></i> <span class="nav-label">ALL MANAGER</span></a> </li>
 
 
+<<<<<<< HEAD
     <li> <a href="add_new_building.php"><i class="fa fa-external-link"></i> <span class="nav-label">ADD NEW BUILDING</span></a> </li>
     <li> <a href="display_new_building.php"><i class="fa fa-home"></i> <span class="nav-label">BUILDING DETAILS</span></a> </li>
+=======
+    <li> <a href="add_new_flat.php"><i class="fa fa-external-link"></i> <span class="nav-label">ADD NEW FLAT</span></a> </li>
+    <li> <a href="all_flat_information.php"><i class="fa fa-home"></i> <span class="nav-label">FLAT INFORMATION</span></a> </li>
+>>>>>>> dbaf912d9b83dcc0883e4b5438ac0d7dc113fdf9
 
 
     <li> <a href="personal_expense.php"><i class="fa fa-home"></i> <span class="nav-label">PERSONAL EXPENSE</span></a> </li>
     <li> <a href="add-expense.php"><i class="fa fa-home"></i> <span class="nav-label">MANAGER EXPENSE</span></a> </li>
+<<<<<<< HEAD
+=======
+
+>>>>>>> dbaf912d9b83dcc0883e4b5438ac0d7dc113fdf9
 
 
     <li> <a href="create_main_asstes.php"><i class="fa fa-home"></i> <span class="nav-label">ADD NEW ASSETS</span></a> </li>
