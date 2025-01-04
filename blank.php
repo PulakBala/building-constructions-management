@@ -17,6 +17,3 @@
 </main>
 <?php include('footer.php') ?> 
 
-
-jodi hater dane jaye taile left => U R U R' U'
-jodi hater bame jaye taile right =>L' U' L U

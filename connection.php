@@ -78,6 +78,15 @@ function get_acc($FltID, $month, $year, $cmd)
     $row = mysqli_fetch_assoc($result);
     echo number_format((float)$row['Total_am'], 0);
   }
+
+  // New CMD for calculating monthly DUE
+  if ($cmd == 'DUE-MONTH') {
+    $fetchQuery = "SELECT sum(f_due) as Total_due FROM flat_bill WHERE f_month = '{$month}' AND f_year = '{$year}'";
+    $result = mysqli_query($conn, $fetchQuery);
+    $row = mysqli_fetch_assoc($result);
+    echo number_format((float)$row['Total_due'], 0);
+  }
+
 }
 
 

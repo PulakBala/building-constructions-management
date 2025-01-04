@@ -4,10 +4,10 @@
 
 <main class="page-content">
   <div class="container-fluid">
-    <div class="row">
+    <div class="">
       <section class="container my-4">
 
-        <div class="row justify-content-end mb-4">
+        <div class="justify-content-end mb-4">
           <div class="col-md-6">
             <!-- Search Input with Bootstrap Design -->
             <div class="input-group">
@@ -22,10 +22,10 @@
         <!-- Search Results will appear here -->
         <div id="searchResults" class="my-4"></div>
 
-        <div class="card-container row">
+        <div class="card-container row" style="gap:0;">
           <?php
           // Fetch data from the database
-          $sqlSelect = "SELECT * FROM building_info"; // Table name should match your database table
+          $sqlSelect = "SELECT id, name, address, manager_name, manager_number, guard_name, guard_number, created_at FROM building_info"; // Table name should match your database table
           $result = mysqli_query($conn, $sqlSelect);
 
           if (mysqli_num_rows($result) > 0) {
@@ -34,7 +34,7 @@
           ?>
               <div class="col-md-4 mb-4">
                 <div class="card">
-                  <div class="card-body p-4 shadow-lg rounded" style="background-color: #f8f9fa;">
+                  <div class="card-body  shadow-lg rounded" style="background-color: #f8f9fa;">
                     <h5 class="card-title">
                       <span class="fw-bold" style="color: #3498db;">Building Name:</span>
                       <span class="text-muted"><?php echo htmlspecialchars($data["name"]); ?></span>
@@ -71,10 +71,10 @@
                     </p>
 
                     <!-- Edit and Delete buttons -->
-                    <a href="edit-flat.php?id=<?php echo $data['id']; ?>" class="btn btn-warning btn-sm">Edit</a>
-                    <a href="delete_flat_info.php?id=<?php echo $data['id']; ?>" class="btn btn-danger btn-sm">Delete</a>
-                    <a href="add_new_flat.php" class="btn btn-danger btn-sm">Delete</a>
-                    <a href="all_flat_information.php" class="btn btn-danger btn-sm">Details</a>
+                    <a href="#" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="#" class="btn btn-danger btn-sm">Delete</a>
+                    <a href="add_new_flat.php?name=<?php echo urlencode($data['name']); ?>" class="btn btn-danger btn-sm">Add Flat</a>
+                    <a href="all_flat_information.php?name=<?php echo urldecode($data['name']); ?>" class="btn btn-danger btn-sm">Details</a>
 
                   </div>
                 </div>

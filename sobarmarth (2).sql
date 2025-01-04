@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 30, 2024 at 02:28 PM
+-- Generation Time: Dec 31, 2024 at 02:13 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -70,7 +70,8 @@ CREATE TABLE `building_info` (
 
 INSERT INTO `building_info` (`id`, `name`, `address`, `manager_name`, `manager_number`, `guard_name`, `guard_number`, `created_at`) VALUES
 (1, 'Addal twoer', 'Dhanmondi 27', 'Rahim', '0172349343', 'Sakil', '0138475345', '2024-12-30 11:16:06'),
-(2, 'Sobarmart Tower', 'Rampura', 'Isral', '0172349343', 'Emon', '0138475345', '2024-12-30 11:47:05');
+(2, 'Sobarmart Tower', 'Rampura', 'Isral', '0172349343', 'Emon', '0138475345', '2024-12-30 11:47:05'),
+(3, 'Pushpa raj', 'Mirpur', 'Mira', '0172349343', 'Mrinal', '0138475345', '2024-12-31 11:30:38');
 
 -- --------------------------------------------------------
 
@@ -170,8 +171,7 @@ CREATE TABLE `flats` (
 --
 
 INSERT INTO `flats` (`id`, `owner_name`, `mobile_number`, `optional_number`, `flatname`, `created_at`) VALUES
-(200, 'Pulak Bala', '01754826927', '01754826927', 'Bakul phul', '2024-12-26 12:58:36'),
-(201, 'Rahim s', '01754826927', '0145263574', 'Pushpa Buillding', '2024-12-26 13:02:25');
+(200, 'Pulak Bala', '01754826927', '01754826927', 'Bakul phul', '2024-12-26 12:58:36');
 
 -- --------------------------------------------------------
 
@@ -221,6 +221,7 @@ INSERT INTO `flat_bill` (`f_id`, `f_date`, `f_month`, `f_year`, `f_service_charg
 
 CREATE TABLE `flat_info` (
   `id` int(11) NOT NULL,
+  `bulding_name` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `mobile_number` varchar(20) NOT NULL,
   `nid_number` varchar(50) NOT NULL,
@@ -236,9 +237,11 @@ CREATE TABLE `flat_info` (
 -- Dumping data for table `flat_info`
 --
 
-INSERT INTO `flat_info` (`id`, `name`, `mobile_number`, `nid_number`, `nid_img`, `rent`, `advance`, `date`, `created_at`, `updated_at`) VALUES
-(6, 'Masum', '01754826927', '23443243', 'https://wh3school.com', 2222.00, 222.00, '0000-00-00', '2024-12-26 10:14:04', '2024-12-26 10:14:04'),
-(9, 'dfdff', '01754826927', '0124242424', 'https://wh3school.com', 343434.00, 234324.00, '0000-00-00', '2024-12-28 07:22:42', '2024-12-28 07:22:42');
+INSERT INTO `flat_info` (`id`, `bulding_name`, `name`, `mobile_number`, `nid_number`, `nid_img`, `rent`, `advance`, `date`, `created_at`, `updated_at`) VALUES
+(6, '', 'Masum', '01754826927', '23443243', 'https://wh3school.com', 2222.00, 222.00, '0000-00-00', '2024-12-26 10:14:04', '2024-12-26 10:14:04'),
+(11, 'Addal twoer', 'sakil', '0172349343', '035465120', 'hsadfdsf', 2000.00, 200.00, '0000-00-00', '2024-12-31 09:50:41', '2024-12-31 09:50:41'),
+(12, 'Addal twoer', 'emon', '0172349343', '4723847', 'hfdslf', 33333.00, 3333.00, '0000-00-00', '2024-12-31 10:08:00', '2024-12-31 10:08:00'),
+(13, 'Sobarmart Tower', 'sakil', '0172349343', '4723847', 'https://wh3school', 1200.00, 120.00, '0000-00-00', '2024-12-31 10:48:06', '2024-12-31 10:48:06');
 
 -- --------------------------------------------------------
 
@@ -359,7 +362,7 @@ ALTER TABLE `assets`
 -- AUTO_INCREMENT for table `building_info`
 --
 ALTER TABLE `building_info`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `construction_cost`
@@ -395,7 +398,7 @@ ALTER TABLE `flat_bill`
 -- AUTO_INCREMENT for table `flat_info`
 --
 ALTER TABLE `flat_info`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `revenue`

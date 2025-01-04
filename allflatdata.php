@@ -80,6 +80,7 @@
 
                 <!-- edit and delete button  -->
                 <a href="edit_manager.php?id=<?php echo $data['id']; ?>" class="btn btn-warning btn-sm">Edit</a>
+                <a href="delete_manager.php?id=<?php echo $data['id']; ?>" class="btn btn-warning btn-sm">Delete</a>
                 <a href="flat-details.php?id=<?php echo $data["id"]; ?>" class="btn btn-info btn-sm">Add Bill</a>
 
               </div>

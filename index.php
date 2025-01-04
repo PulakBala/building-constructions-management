@@ -14,32 +14,23 @@ $searchQuery = isset($_POST['query']) ? $_POST['query'] : '';
 $flatData = getFlatBillSummary($currentMonth, $currentYear);
 // print_r($flatData);
 
-// Query to calculate the total f_due
-$query = "SELECT SUM(f_due) AS total_due FROM flat_bill";
-$result = mysqli_query($conn, $query);
+// Fetch total expense amount for the current month and year
+$totalExpense = getTotalExpense($currentMonth, $currentYear);
 
-// Check if the query ran successfully
-if ($result) {
-    $row = mysqli_fetch_assoc($result);
-    $totalDue = $row['total_due'];
-   
-} else {
-    echo "Error: " . mysqli_error($conn);
+// Function to fetch total expense amount
+function getTotalExpense($month, $year) {
+    global $conn; // Assuming $conn is your database connection
+    $query = "SELECT SUM(amount) as total_amount FROM expense WHERE MONTHNAME(created_at) = ? AND YEAR(created_at) = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("si", $month, $year);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    return $row['total_amount'];
 }
 
 
-// Query to calculate the total f_due
-$query = "SELECT SUM(amount) AS total_due FROM expense";
-$result = mysqli_query($conn, $query);
 
-// Check if the query ran successfully
-if ($result) {
-    $row = mysqli_fetch_assoc($result);
-    $personal_expense = $row['total_due'];
-   
-} else {
-    echo "Error: " . mysqli_error($conn);
-}
 
 ?>
 
@@ -95,8 +86,8 @@ if ($result) {
                                     <h5 class="card-title">Total Due</h5>
                                 </div>
                                 <div class="card-body">
-                                <h2 class="card-text text-success"><?= htmlspecialchars($totalDue) ?></h2>
-                                <p class="card-text text-center">Total due amount</p>
+                                    <h2 class="card-text text-success"><?= get_acc('0', date('F'), date('Y'), 'DUE-MONTH') ?> .TK</h2>
+                                    <p class="card-text text-center">Total due amount <?= date('F') ?></p>
                                 </div>
                             </div>
                         </div>
@@ -104,12 +95,12 @@ if ($result) {
 
                         <div class="col-md-4 mb-4">
                             <div class="card shadow border-0">
-                                <div class="card-header bg-secondary text-white">
-                                    <h5 class="card-title">Personal Expenses</h5>
+                                <div class="card-header bg-danger text-white">
+                                    <h5 class="card-title">Total Personal Expense</h5>
                                 </div>
                                 <div class="card-body">
-                                <h2 class="card-text text-success"><?= htmlspecialchars($personal_expense) ?></h2>
-                                <p class="card-text text-center">Total Personal Expense</p>
+                                <h2> ৳<?php echo number_format($totalExpense, 2); ?></h2>
+                                    <p class="card-text text-center">Total expense amount <?= date('F') ?></p>
                                 </div>
                             </div>
                         </div>

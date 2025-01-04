@@ -166,11 +166,6 @@
 
 
                             </div>
-
-
-
-
-
                             <div class="form-section" style="display: none;">
                                 <h5>8. Rooftop Room Rent</h5>
 

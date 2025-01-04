@@ -33,7 +33,7 @@ if (isset($_SESSION['sa_crm_drs_id']) and $_SESSION['sa_crm_drs_id'] == true) {
     <li> <a href="add-expense.php"><i class="fa fa-home"></i> <span class="nav-label">MANAGER EXPENSE</span></a> </li>
 
 
-    <li> <a href="add_new_assets.php"><i class="fa fa-home"></i> <span class="nav-label">ADD NEW ASSETS</span></a> </li>
+    <li> <a href="create_main_asstes.php"><i class="fa fa-home"></i> <span class="nav-label">ADD NEW ASSETS</span></a> </li>
 
 
     <li> <a href="#" data-toggle="collapse" data-target="#construction-tables" class="collapsed active"><i class="fa fa-briefcase"></i>

@@ -41,7 +41,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
 
     // Calculate total amount
-    $totalAmount = $serviceCharge + $internetBill + $dishBill + $flatRent + $commonBill + $centerRent + $guardBill + $emptyFlatBill + $centerVarious + $atticRent + $donation + $developmentVarious;
+    $totalAmount = $serviceCharge + $internetBill + $dishBill + $flatRent + $centerRent  + $atticRent + $donation + $developmentVarious - $commonBill - $guardBill - $centerVarious;
+
+    
 
     // Convert total amount to words
     $totalAmountWords = ucfirst(numberToWords($totalAmount));
