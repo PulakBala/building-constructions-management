@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-$table = isset($_GET['table']) ? $_GET['table'] : 'revenue'; // Default to 'revenue'
+$table = isset($_GET['table']) ? $_GET['table'] : 'projects'; // Default to 'projects'
 
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['id'])) {
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id'])) {
     echo "</pre>";
 
     try {
-        if ($table === 'revenue') {
+        if ($table === 'projects') {
             $payment_type = $_POST['payment_type'];
             $sql = "UPDATE $table SET amount = ?, payment_type = ?, note = ? WHERE id = ?";
             $stmt = $conn->prepare($sql);
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id'])) {
         <label for="amount">Amount:</label>
         <input type="number" class="form-control" id="amount" name="amount" value="<?php echo htmlspecialchars($record['amount'] ?? ''); ?>" required>
     </div>
-    <?php if ($table === 'revenue'): ?>
+    <?php if ($table === 'projects'): ?>
     <div class="mb-3">
         <label class="form-label" style="font-size: 1rem; font-weight: bold;">Payment Type</label>
         <select class="form-control form-control-lg" name="payment_type" required>
@@ -92,8 +92,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id'])) {
     <?php endif; ?>
 
     <div class="form-group">
-        <label for="descriptionOrNote"><?php echo $table === 'revenue' ? 'Note' : 'Description'; ?>:</label>
-        <textarea class="form-control" id="descriptionOrNote" name="descriptionOrNote" required><?php echo htmlspecialchars($table === 'revenue' ? $record['note'] ?? '' : $record['description'] ?? ''); ?></textarea>
+        <label for="descriptionOrNote"><?php echo $table === 'projects' ? 'Note' : 'Description'; ?>:</label>
+        <textarea class="form-control" id="descriptionOrNote" name="descriptionOrNote" required><?php echo htmlspecialchars($table === 'projects' ? $record['note'] ?? '' : $record['description'] ?? ''); ?></textarea>
     </div>
     <button type="submit" class="btn btn-primary">Update</button>
 </form>

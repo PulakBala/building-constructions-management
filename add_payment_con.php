@@ -4,23 +4,25 @@
 // Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   // Retrieve form data
+  $main_project_id = isset($_GET['id']) ? (int)$_GET['id'] : 0; // Get main_projects_id from URL
   $amount = mysqli_real_escape_string($conn, $_POST['amount']);
   $date = mysqli_real_escape_string($conn, $_POST['date']);
   $payment_type = mysqli_real_escape_string($conn, $_POST['payment_type']);
  
   $note = mysqli_real_escape_string($conn, $_POST['note']);
   $user_id = $_SESSION['user_id']; // Assuming user ID is stored in session
-
+  $full_name = mysqli_real_escape_string($conn, $_POST['full_name']); // Retrieve full_name from form data
   // Prepare and execute the SQL query to insert data using MySQLi
-  $sql = "INSERT INTO revenue (amount, payment_type, date, note) VALUES ('$amount', '$payment_type', '$date', '$note')";
+  $sql = "INSERT INTO projects (main_project_id, full_name, amount, payment_type, date, note) VALUES ('$main_project_id', '$full_name', '$amount', '$payment_type', '$date', '$note')";
 
   if (mysqli_query($conn, $sql)) {
-    echo "<script>toastr.success('Revenue added successfully!');</script>";
+    echo "<script>toastr.success('projects added successfully!');</script>";
     echo "<script>window.location.href = window.location.href;</script>";
   } else {
     echo "<script>toastr.error('Error: " . mysqli_error($conn) . "');</script>";
   }
 }
+$main_project_id = isset($_GET['id']) ? (int)$_GET['id'] : 0; // Get main_projects_id from URL
 
 // Pagination settings
 $records_per_page = 10;
@@ -28,19 +30,20 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $records_per_page;
 
 // Fetch total number of records
-$total_sql = "SELECT COUNT(*) as count FROM revenue";
+$total_sql = "SELECT COUNT(*) as count FROM projects WHERE main_project_id = '$main_project_id'";
 $total_result = mysqli_query($conn, $total_sql);
 $total_row = mysqli_fetch_assoc($total_result);
 $total_records = $total_row['count'];
 $total_pages = ceil($total_records / $records_per_page);
 
-// Modify the existing query to include pagination
-$sql = "SELECT revenue.id, revenue.amount, revenue.date, revenue.payment_type, revenue.category, revenue.note, revenue.created_at
-      FROM revenue 
-      ORDER BY revenue.created_at DESC 
+// Modify the existing query to include pagination and filter by main_project_id
+$sql = "SELECT projects.id, projects.amount, projects.date, projects.payment_type, projects.category, projects.note, projects.created_at, projects.full_name
+      FROM projects 
+      WHERE main_project_id = '$main_project_id' 
+      ORDER BY projects.created_at DESC 
       LIMIT $offset, $records_per_page";
 $result = mysqli_query($conn, $sql);
-$revenues = mysqli_fetch_all($result, MYSQLI_ASSOC);
+$projectss = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 
 ?>
@@ -70,7 +73,7 @@ $revenues = mysqli_fetch_all($result, MYSQLI_ASSOC);
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body text-center">
-                <p>Are you sure you want to add this revenue?</p>
+                <p>Are you sure you want to add this projects?</p>
             </div>
             <div class="modal-footer justify-content-center">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="width: 100px;">No</button>
@@ -90,6 +93,10 @@ $revenues = mysqli_fetch_all($result, MYSQLI_ASSOC);
                     </div>
                     <div class="card-body" style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                         <form action="" method="post" onsubmit="return confirmSubmission()">
+                            <div class="mb-3">
+                                <label class="form-label" style="font-size: 1rem; font-weight: bold;">Name</label>
+                                <input type="text" class="form-control form-control" name="full_name" placeholder="Enter amount" required>
+                            </div>
                             <div class="mb-3">
                                 <label class="form-label" style="font-size: 1rem; font-weight: bold;">Amount (৳)</label>
                                 <input type="number" class="form-control form-control" name="amount" placeholder="Enter amount" required>
@@ -115,7 +122,7 @@ $revenues = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 
                             <div class="mb-3">
-                                <label class="form-label" style="font-size: 1rem; font-weight: bold;">Payment By</label>
+                                <label class="form-label" style="font-size: 1rem; font-weight: bold;">Note</label>
                                 <input class="form-control form-control" name="note" rows="3" placeholder="Payment By"></input>
                             </div>
 
@@ -138,28 +145,25 @@ $revenues = mysqli_fetch_all($result, MYSQLI_ASSOC);
                 <table class="table table-striped" style="width: 100%;">
                     <thead>
                         <tr>
+                            <th>Full Name</th>
                             <th>Date</th>
-                          
                             <th>Amount (৳)</th>
                             <th>Payment Type</th>
-                            <th>Payment By</th>
-                            
+                            <th>Note</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($revenues as $revenue): ?>
+                        <?php foreach ($projectss as $projects): ?>
                             <tr>
-                                <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($revenue['date']))); ?></td>
-                              
-                                <td><?php echo htmlspecialchars(number_format($revenue['amount'], 0)); ?></td>
-                                <td><?php echo htmlspecialchars($revenue['payment_type']); ?></td>
-                                <td><?php echo htmlspecialchars($revenue['note']); ?></td>
-                               
+                                <td><?php echo htmlspecialchars($projects['full_name']); ?></td>
+                                <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($projects['date']))); ?></td>
+                                <td><?php echo htmlspecialchars(number_format($projects['amount'], 0)); ?></td>
+                                <td><?php echo htmlspecialchars($projects['payment_type']); ?></td>
+                                <td><?php echo htmlspecialchars($projects['note']); ?></td>
                                 <td>
-                                <a href="javascript:void(0);" onclick="loadEditForm(<?php echo htmlspecialchars($revenue['id']); ?>);" class="btn btn-sm btn-warning">Edit</a>
-
-                                <a href="javascript:void(0);" onclick="openDeleteModal('delete_add_payment.php?table=revenue&id=<?php echo htmlspecialchars($revenue['id']); ?>');" class="btn btn-sm btn-danger">Delete</a>
+                                    <a href="javascript:void(0);" onclick="loadEditForm(<?php echo htmlspecialchars($projects['id']); ?>);" class="btn btn-sm btn-warning">Edit</a>
+                                    <a href="javascript:void(0);" onclick="openDeleteModal('delete_add_payment.php?table=projects&id=<?php echo htmlspecialchars($projects['id']); ?>');" class="btn btn-sm btn-danger">Delete</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -234,7 +238,7 @@ $revenues = mysqli_fetch_all($result, MYSQLI_ASSOC);
         $.ajax({
             url: 'edit_add_payment.php',
             type: 'GET',
-            data: { id: id, table: 'revenue' },
+            data: { id: id, table: 'projects' },
             success: function(response) {
                 $('#editModal .modal-body').html(response);
                 $('#editModal').modal('show');

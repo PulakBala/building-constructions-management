@@ -1,7 +1,6 @@
 <?php include('connection.php');
-//echo sha1('dst##89##');
-// $new_password = '@sobarmart#25#'
-$stored_hashed_password = '3301e17c04255de032af4e03e1432cb6d6e12bdb'; // '@sobarmart#25#' এর হ্যাশ
+
+$stored_hashed_password = '3301e17c04255de032af4e03e1432cb6d6e12bdb'; 
 if(isset($_POST['subb'])){
     $username = $_POST['username'];
     $input_password = $_POST['password']; // ইনপুট করা পাসওয়ার্ড

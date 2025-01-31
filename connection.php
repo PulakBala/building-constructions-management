@@ -1,10 +1,7 @@
 <?php
 session_start();
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "sobarmarth";
-//$servername = "localhost";$username = "root"; $password = ""; $dbname = "proj_daussalam";  
+$servername = "localhost";$username = "root"; $password = ""; $dbname = "sobarmarth";  
+// $servername = "localhost";$username = "sobarmartholding_sobar_marth"; $password = "HuCx5e_o5}VW"; $dbname = "sobarmartholding_sobar_marth";  
 
 
 $conn = mysqli_connect($servername, $username, $password, $dbname);
@@ -66,29 +63,26 @@ function get_acc($FltID, $month, $year, $cmd)
   }
 
   if ($cmd == 'MONTH') {
-    $fetchQuery = "SELECT sum(f_paid_amount) as Total_am FROM flat_bill WHERE f_month = '{$month}' AND f_year = '{$year}' AND f_status = 'Received' ";
+    $fetchQuery = "SELECT sum(f_paid_amount) as Total_am FROM payments WHERE f_month = '{$month}' AND f_year = '{$year}' ";
     $result = mysqli_query($conn, $fetchQuery);
     $row = mysqli_fetch_assoc($result);
     echo number_format((float)$row['Total_am'], 0);
   }
 
   if ($cmd == 'COUNT-TR-MONTH') {
-    $fetchQuery = "SELECT count(f_total) as Total_am FROM flat_bill WHERE f_month = '{$month}' AND f_year = '{$year}' AND f_status = 'Received' ";
+    $fetchQuery = "SELECT count(f_total) as Total_am FROM flat_bill WHERE f_month = '{$month}' AND f_year = '{$year}' ";
     $result = mysqli_query($conn, $fetchQuery);
     $row = mysqli_fetch_assoc($result);
     echo number_format((float)$row['Total_am'], 0);
   }
-
-  // New CMD for calculating monthly DUE
+    // New CMD for calculating monthly DUE
   if ($cmd == 'DUE-MONTH') {
-    $fetchQuery = "SELECT sum(f_due) as Total_due FROM flat_bill WHERE f_month = '{$month}' AND f_year = '{$year}'";
+    $fetchQuery = "SELECT sum(f_due) as Total_due FROM payments WHERE f_month = '{$month}' AND f_year = '{$year}'";
     $result = mysqli_query($conn, $fetchQuery);
     $row = mysqli_fetch_assoc($result);
     echo number_format((float)$row['Total_due'], 0);
   }
-
 }
-
 
 function getFlatBillSummary($month, $year) {
   global $conn;
@@ -97,24 +91,27 @@ function getFlatBillSummary($month, $year) {
           fb.f_flatId,
           f.flatname,
           f.owner_name,
-          SUM(fb.f_total) AS total_collected,
-          f_due
+          SUM(p.total_amount) AS total_collected,
+          SUM(p.f_due) AS f_due
       FROM 
           flat_bill fb
       LEFT JOIN 
           flats f ON fb.f_flatId = f.id
+      LEFT JOIN 
+          payments p ON fb.f_flatId = p.f_flatId AND p.f_month = '{$month}' AND p.f_year = '{$year}'
       WHERE 
-          fb.f_month = '{$month}' AND fb.f_year = '{$year}' AND fb.f_status = 'Received'
+          fb.f_month = '{$month}' 
+          AND fb.f_year = '{$year}' 
+         
       GROUP BY 
           fb.f_flatId, f.flatname
   ";
   $result = mysqli_query($conn, $query);
   if (!$result) {
-      die("Query Error: " . mysqli_error($conn)); // Debugging for query issues
+      die("Query Error: " . mysqli_error($conn));
   }
   return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
-
 
 
 

@@ -6,7 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   // Retrieve form data
   $main_project_id = isset($_GET['id']) ? (int)$_GET['id'] : 0; // Get main_projects_id from URL
 
-  $construction_name = mysqli_real_escape_string($conn, $_POST['construction_name']);
+  $element_name = mysqli_real_escape_string($conn, $_POST['element_name']);
   $amount = mysqli_real_escape_string($conn, $_POST['amount']);
   $date = mysqli_real_escape_string($conn, $_POST['date']);
 
@@ -14,8 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $user_id = $_SESSION['user_id']; // Assuming user ID is stored in session
 
   // Prepare and execute the SQL query to insert data
-  $sql = "INSERT INTO construction_cost ( construction_name, amount, date, main_project_id, note) 
-          VALUES ( '$construction_name', '$amount', '$date', '$main_project_id', '$note')";
+  $sql = "INSERT INTO constructions_element ( element_name, amount, date, main_project_id, note) 
+          VALUES ( '$element_name', '$amount', '$date', '$main_project_id', '$note')";
 
   if (mysqli_query($conn, $sql)) {
     echo "<script>toastr.success('Construction record added successfully!');</script>";
@@ -32,14 +32,14 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $records_per_page;
 
 // Fetch total number of records
-$total_sql = "SELECT COUNT(*) as count FROM construction_cost";
+$total_sql = "SELECT COUNT(*) as count FROM constructions_element";
 $total_result = mysqli_query($conn, $total_sql);
 $total_row = mysqli_fetch_assoc($total_result);
 $total_records = $total_row['count'];
 $total_pages = ceil($total_records / $records_per_page);
 
 // Fetch paginated construction records
-$sql = "SELECT id, construction_name, amount, date, note FROM construction_cost
+$sql = "SELECT id, element_name, amount, date, note FROM constructions_element
         WHERE main_project_id = '$main_project_id' 
         ORDER BY created_at DESC 
         LIMIT $offset, $records_per_page";
@@ -88,14 +88,14 @@ $constructions = mysqli_fetch_all($result, MYSQLI_ASSOC);
           <div class="col-12 col-md-8 col-lg-7">
             <div class="">
               <div class="card-header">
-              <h5 class="card-title mb-0" style="font-size: 1.2rem; ">ADD CONSTRUCTION COST</h5>
+              <h5 class="card-title mb-0" style="font-size: 1.2rem; ">ADD CONSTRUCTION ELEMENT</h5>
               </div>
               <div class="card-body" style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                 <form action="" method="post" onsubmit="return confirmSubmission()">
                  
                   <div class="mb-3">
                     <label class="form-label" style="font-size: 1rem; font-weight: bold;"> Name</label>
-                    <input type="text" class="form-control form-control" name="construction_name" placeholder="Enter construction name" required>
+                    <input type="text" class="form-control form-control" name="element_name" placeholder="Enter construction name" required>
                   </div>
                   <div class="mb-3">
                     <label class="form-label" style="font-size: 1rem; font-weight: bold;">Amount (৳)</label>
@@ -117,7 +117,7 @@ $constructions = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
                   <button type="submit" class="btn btn-primary ">
                     <i class="align-middle" data-feather="plus"></i>
-                    Add Construction Cost
+                    Add Construction Element
                   </button>
                 </form>
               </div>
@@ -147,7 +147,7 @@ $constructions = mysqli_fetch_all($result, MYSQLI_ASSOC);
                 <?php foreach ($constructions as $construction): ?>
                   <tr>
                     
-                    <td><?php echo htmlspecialchars($construction['construction_name']); ?></td>
+                    <td><?php echo htmlspecialchars($construction['element_name']); ?></td>
                     <td><?php echo htmlspecialchars(number_format($construction['amount'], 0)); ?></td>
                     <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($construction['date']))); ?></td>
                 
@@ -157,7 +157,7 @@ $constructions = mysqli_fetch_all($result, MYSQLI_ASSOC);
                     <td>
                       <a href="javascript:void(0);" onclick="loadEditForm(<?php echo htmlspecialchars($construction['id']); ?>);" class="btn btn-sm btn-warning">Edit</a>
 
-                      <a href="javascript:void(0);" onclick="openDeleteModal('delete_constructions_cost.php?table=construction_cost&id=<?php echo htmlspecialchars($construction['id']); ?>');" class="btn btn-sm btn-danger">Delete</a>
+                      <a href="javascript:void(0);" onclick="openDeleteModal('delete_constructions_element.php?table=constructions_element&id=<?php echo htmlspecialchars($construction['id']); ?>');" class="btn btn-sm btn-danger">Delete</a>
                     </td>
                   </tr>
                 <?php endforeach; ?>

@@ -4,27 +4,23 @@
 // Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   // Retrieve form data
-  $asset_name = mysqli_real_escape_string($conn, $_POST['asset_name']);
-  $asset_value = mysqli_real_escape_string($conn, $_POST['asset_value']);
-  $contact = mysqli_real_escape_string($conn, $_POST['contact']);
-  $registration_cost = mysqli_real_escape_string($conn, $_POST['registration_cost']);
-  $other_expenses = mysqli_real_escape_string($conn, $_POST['other_expenses']);
+  $main_project_id = isset($_GET['id']) ? (int)$_GET['id'] : 0; // Get main_projects_id from URL
+  $amount = mysqli_real_escape_string($conn, $_POST['amount']);
   $date = mysqli_real_escape_string($conn, $_POST['date']);
 
- 
-
   $user_id = $_SESSION['user_id']; // Assuming user ID is stored in session
-
+  $full_name = mysqli_real_escape_string($conn, $_POST['full_name']); // Retrieve full_name from form data
   // Prepare and execute the SQL query to insert data using MySQLi
-  $sql = "INSERT INTO assets (asset_name, asset_value, contact, registration_cost, other_expenses, date) VALUES ('$asset_name', '$asset_value', '$contact', '$registration_cost', '$other_expenses', '$date')";
+  $sql = "INSERT INTO other_invest (main_project_id, full_name, amount, date) VALUES ('$main_project_id', '$full_name', '$amount', '$date')";
 
   if (mysqli_query($conn, $sql)) {
-    echo "<script>toastr.success('Assets added successfully!');</script>";
+    echo "<script>toastr.success('Invest added successfully!');</script>";
     echo "<script>window.location.href = window.location.href;</script>";
   } else {
     echo "<script>toastr.error('Error: " . mysqli_error($conn) . "');</script>";
   }
 }
+$main_project_id = isset($_GET['id']) ? (int)$_GET['id'] : 0; // Get main_projects_id from URL
 
 // Pagination settings
 $records_per_page = 10;
@@ -32,18 +28,20 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $records_per_page;
 
 // Fetch total number of records
-$total_sql = "SELECT COUNT(*) as count FROM assets";
+$total_sql = "SELECT COUNT(*) as count FROM other_invest WHERE main_project_id = '$main_project_id'";
 $total_result = mysqli_query($conn, $total_sql);
 $total_row = mysqli_fetch_assoc($total_result);
 $total_records = $total_row['count'];
 $total_pages = ceil($total_records / $records_per_page);
 
-// Modify the existing query to include pagination
-$sql = "SELECT * FROM assets 
-      ORDER BY assets.created_at DESC 
+// Modify the existing query to include pagination and filter by main_project_id
+$sql = "SELECT other_invest.id, other_invest.amount, other_invest.date, other_invest.full_name
+      FROM other_invest 
+      WHERE main_project_id = '$main_project_id' 
+      ORDER BY other_invest.created_at DESC 
       LIMIT $offset, $records_per_page";
 $result = mysqli_query($conn, $sql);
-$assets = mysqli_fetch_all($result, MYSQLI_ASSOC);
+$invests = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
 
 ?>
@@ -73,7 +71,7 @@ $assets = mysqli_fetch_all($result, MYSQLI_ASSOC);
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body text-center">
-                <p>Are you sure you want to add this assets?</p>
+                <p>Are you sure you want to add this expense?</p>
             </div>
             <div class="modal-footer justify-content-center">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="width: 100px;">No</button>
@@ -89,44 +87,33 @@ $assets = mysqli_fetch_all($result, MYSQLI_ASSOC);
             <div class="col-12 col-md-8 col-lg-7">
                 <div class="">
                     <div class="card-header">
-                        <h5 class="card-title mb-0" style="font-size: 1.2rem; ">ADD NEW ASSETS</h5>
+                        <h5 class="card-title mb-0" style="font-size: 1.2rem; ">ADD OTHERS EXPENSE</h5>
                     </div>
                     <div class="card-body" style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                         <form action="" method="post" onsubmit="return confirmSubmission()">
                             <div class="mb-3">
-                                <label class="form-label" style="font-size: 1rem; font-weight: bold;">Asset Name</label>
-                                <input type="text" class="form-control form-control" name="asset_name" placeholder="Enter asset name" required>
+                                <label class="form-label" style="font-size: 1rem; font-weight: bold;">Name</label>
+                                <input type="text" class="form-control form-control" name="full_name" placeholder="Enter amount" required>
                             </div>
-
                             <div class="mb-3">
-                                <label class="form-label" style="font-size: 1rem; font-weight: bold;">Asset Value</label>
-                                <input type="text" class="form-control form-control" name="asset_value" placeholder="Enter asset value" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label" style="font-size: 1rem; font-weight: bold;">Contact Number</label>
-                                <input type="text" class="form-control form-control" name="contact" placeholder="Enter contact number" required>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label class="form-label" style="font-size: 1rem; font-weight: bold;">Registration Cost</label>
-                                <input type="text" class="form-control form-control" name="registration_cost" placeholder="Enter registration cost" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label" style="font-size: 1rem; font-weight: bold;">Other Expenses</label>
-                                <input type="text" class="form-control form-control" name="other_expenses" placeholder="Enter other expenses" required>
+                                <label class="form-label" style="font-size: 1rem; font-weight: bold;">Amount (৳)</label>
+                                <input type="number" class="form-control form-control" name="amount" placeholder="Enter amount" required>
                             </div>
                             
                              <div class="mb-3">
-                                <label class="form-label" style="font-size: 1rem; font-weight: bold;">By Date</label>
+                                <label class="form-label" style="font-size: 1rem; font-weight: bold;">Date</label>
                                 <input type="date" class="form-control form-control" name="date" required>
                             </div>
 
 
+                           
+
+
+                        
+
                             <button type="submit" class="btn btn-primary ">
                                 <i class="align-middle" data-feather="plus"></i>
-                                Add New Assets
+                                Add Expense
                             </button>
                         </form>
                     </div>
@@ -137,35 +124,30 @@ $assets = mysqli_fetch_all($result, MYSQLI_ASSOC);
         </div>
         <div class=" mt-4">
             <div class="card-header">
-                <h5 class="card-title mb-0" style="font-size: 1.5rem; ">Assets History</h5>
+                <h5 class="card-title mb-0" style="font-size: 1.5rem; ">Payment History</h5>
             </div>
             <div class="card-body">
                 <table class="table table-striped" style="width: 100%;">
                     <thead>
                         <tr>
-                            <th>Asset Name</th>
-                            <th>Asset Value</th>
-                            <th>Contact Number</th>
-                            <th>Registration Cost</th>
-                            <th>Other Expenses</th>
-                            <th>By Date</th>
+                            <th>Full Name</th>
+                            <th>Date</th>
+                            <th>Amount (৳)</th>
+                          
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($assets as $asset): ?>
+                        <?php foreach ($invests as $invest): ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($asset['asset_name']); ?></td>
-                                <td><?php echo htmlspecialchars($asset['asset_value']); ?></td>
-                                <td><?php echo htmlspecialchars($asset['contact']); ?></td>
-                                <td><?php echo htmlspecialchars($asset['registration_cost']); ?></td>
-                                <td><?php echo htmlspecialchars($asset['other_expenses']); ?></td>
-                                <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($asset['date']))); ?></td>
+                                <td><?php echo htmlspecialchars($invest['full_name']); ?></td>
+                                <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($invest['date']))); ?></td>
+                                <td><?php echo htmlspecialchars(number_format($invest['amount'], 0)); ?></td>
                                
                                 <td>
-                                <a href="javascript:void(0);" onclick="loadEditForm(<?php echo htmlspecialchars($asset['id']); ?>);" class="btn btn-sm btn-warning">Edit</a>
-
-                                <a href="javascript:void(0);" onclick="openDeleteModal('delete_add_payment.php?table=assets&id=<?php echo htmlspecialchars($asset['id']); ?>');" class="btn btn-sm btn-danger">Delete</a>
+                                    <a href="javascript:void(0);" onclick="loadEditForm(<?php echo htmlspecialchars($invest['id']); ?>);" class="btn btn-sm btn-warning">Edit</a>
+                                    <a href="javascript:void(0);" onclick="openDeleteModal('delete_oth_invest.php?table=invest&id=<?php echo htmlspecialchars($invest['id']); ?>');" class="btn btn-sm btn-danger">Delete</a>
+                                    
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -228,7 +210,7 @@ $assets = mysqli_fetch_all($result, MYSQLI_ASSOC);
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Content will be loaded here from "edit_addData.php" -->
+                <!-- Content will be loaded here from " .php" -->
             </div>
         </div>
     </div>
@@ -238,11 +220,9 @@ $assets = mysqli_fetch_all($result, MYSQLI_ASSOC);
     // Function to load edit form into the modal
     function loadEditForm(id) {
         $.ajax({
-            url: 'edit_new_assets.php',
+            url: 'edit_oth_invest.php',
             type: 'GET',
-            data: { id: id,
-            table: 'assets' 
-          },
+            data: { id: id, table: 'other_invest' },
             success: function(response) {
                 $('#editModal .modal-body').html(response);
                 $('#editModal').modal('show');
@@ -332,14 +312,29 @@ $assets = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     // Update the delete button to open the modal
     function openDeleteModal(url) {
-        deleteUrl = url;
-        $('#deleteConfirmModal').modal('show');
+        // Set the delete URL
+        deleteUrl = url; 
+        $('#deleteConfirmModal').modal('show'); // Show the confirmation modal
     }
 
     // Handle the confirmation within the modal
     document.getElementById('confirmDelete').addEventListener('click', function() {
-        $('#deleteConfirmModal').modal('hide');
-        window.location.href = deleteUrl;
+        $('#deleteConfirmModal').modal('hide'); // Hide the modal
+
+        // AJAX call to delete the record
+        $.ajax({
+            url: deleteUrl,
+            type: 'GET', // or 'POST' depending on your delete method
+            success: function(response) {
+                // Handle success (e.g., show success message, refresh data)
+                toastr.success('Record deleted successfully!');
+                location.reload(); // Refresh the page to see the updated data
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', status, error);
+                toastr.error('Error deleting record.');
+            }
+        });
     });
 </script>
 

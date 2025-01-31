@@ -5,13 +5,13 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-$table = 'oth_earn'; // Hardcoded for construction table
+$table = 'other_invest'; // Hardcoded for construction table
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['id'])) {
     $id = $_GET['id'];
 
     // Fetch the current data for the given ID
-    $sql = "SELECT * FROM construction_cost WHERE id = ?";
+    $sql = "SELECT * FROM other_invest WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $id);
     $stmt->execute();
@@ -28,31 +28,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['id'])) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id'])) {
     $id = $_POST['id'];
     
-    $construction_name = $_POST['construction_name'];
+    $full_name = $_POST['full_name'];
     $amount = $_POST['amount'];
     $date = $_POST['date'];
  
-    $note = $_POST['note'];
 
-    $table = 'construction_cost';
+
+    $table = 'other_invest';
 
     try {
         $sql = "UPDATE $table SET 
               
-                construction_name = ?, 
+                full_name = ?, 
                 amount = ?, 
-                date = ?, 
-               
-                note = ? 
+                date = ? 
                 WHERE id = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param('sdssi', 
+        $stmt->bind_param('sdsi', 
            
-            $construction_name, 
+            $full_name, 
             $amount, 
             $date, 
           
-            $note, 
+         
             $id
         );
 
@@ -77,15 +75,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id'])) {
 }
 ?>
 
-<form id="editForm" action="edit_constructions_cost.php" method="post">
+<form id="editForm" action="edit_oth_invest.php" method="post">
     <input type="hidden" name="id" value="<?php echo htmlspecialchars($record['id'] ?? ''); ?>">
     
 
     
     <div class="form-group mb-3">
-        <label for="construction_name">Name:</label>
-        <input type="text" class="form-control" id="construction_name" name="construction_name" 
-               value="<?php echo htmlspecialchars($record['construction_name'] ?? ''); ?>" required>
+        <label for="full_name">Name:</label>
+        <input type="text" class="form-control" id="full_name" name="full_name" 
+               value="<?php echo htmlspecialchars($record['full_name'] ?? ''); ?>" required>
     </div>
     
     <div class="form-group mb-3">
@@ -101,11 +99,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id'])) {
     </div>
     
 
-    
-    <div class="form-group mb-3">
-        <label for="note">Note:</label>
-        <textarea class="form-control" id="note" name="note" rows="3"><?php echo htmlspecialchars($record['note'] ?? ''); ?></textarea>
-    </div>
     
     <button type="submit" class="btn btn-primary">Update</button>
 </form>

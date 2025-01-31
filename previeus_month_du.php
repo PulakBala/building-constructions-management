@@ -70,7 +70,7 @@ $selectedYear = $_GET['year'] ?? $currentYear;
               $query = "
                 SELECT f.flatname, f.mobile_number, p.f_month, SUM(p.f_due) AS total_due
                 FROM flats f
-                JOIN flat_bill p ON f.id = p.f_flatId
+                JOIN payments p ON f.id = p.f_flatId
                 WHERE p.f_month = ? AND p.f_year = ?
                 GROUP BY f.id
               ";

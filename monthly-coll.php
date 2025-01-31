@@ -3,6 +3,12 @@
 <?php include('header.php'); ?>
 <?php include('sidebar.php'); ?>
 
+<style>
+    .amount {
+        color: red; /* Change to your desired color */
+    }
+</style>
+
 <main class="page-content">
   <div class="container-fluid">
     <div class="row">
@@ -11,39 +17,36 @@
 
           <?php
           if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $id = $_POST['id'];
-            $typ = $_POST['typ'];
-            $paid_amount = isset($_POST['paid_amount']) ? floatval($_POST['paid_amount']) : 0;
-            // if (isset($_POST['mobile_number'])) {
-            //   $mobile_number = $_POST['mobile_number'];
-            //   $f_total = $_POST['f_total'];
-            //   $f_month = $_POST['f_month'];
-            //   $f_year = $_POST['f_year'];
-            //   $f_due = $f_total - $paid_amount;
-
-            //   $msg = 'Bill Paid ৳' . number_format($paid_amount, 2) . ' for ' . $f_month . '-' . $f_year .
-            //     '. Due amount: ৳' . number_format($f_due, 2);
-
-            //   sendGSMS('8809617620596', $mobile_number, $msg, 'C200022562c68264972b36.87730554', 'text&contacts');
-            // }
-            $updateQuery = "UPDATE flat_bill 
-                           SET f_status = ?, 
-                               f_paid_amount = ?, 
-                               f_due = (f_total - ?) 
-                           WHERE f_id = ?";
-
+            $id = $_POST['id']; // f_flatId
+            $new_paid_amount = isset($_POST['paid_amount']) ? floatval($_POST['paid_amount']) : 0;
+            
+            // Update query modified to include month and year checks
+            $month = isset($_GET['month']) ? $_GET['month'] : date('F'); // Get the month from GET parameters
+            $year = isset($_GET['year']) ? $_GET['year'] : date('Y'); // Get the year from GET parameters
+        
+            // Update f_paid_amount and f_due in one query
+            $updateQuery = "UPDATE payments
+                            SET f_paid_amount = f_paid_amount + ?, 
+                                f_due = (total_amount - (f_paid_amount + ?)) 
+                            WHERE f_flatId = ? AND f_month = ? AND f_year = ?";
             $stmt = $conn->prepare($updateQuery);
-            $stmt->bind_param("sddi", $typ, $paid_amount, $paid_amount, $id);
-
-            if ($stmt->execute()) {
-              header('Location: ' . $_SERVER['PHP_SELF']);
-              exit();
-            } else {
-              echo "Error updating status: " . $conn->error;
-            }
-
+            $stmt->bind_param("ddiss", $new_paid_amount, $new_paid_amount, $id, $month, $year);
+            $stmt->execute();
+        
+            // Update f_due separately if needed
+            $updateDueQuery = "UPDATE payments
+                               SET f_due = (total_amount - f_paid_amount)
+                               WHERE f_flatId = ? AND f_month = ? AND f_year = ?";
+            $stmtDue = $conn->prepare($updateDueQuery);
+            $stmtDue->bind_param("iss", $id, $month, $year);
+            $stmtDue->execute();
+        
             $stmt->close();
-          }
+            $stmtDue->close();
+        
+            header('Location: ' . $_SERVER['PHP_SELF']);
+            exit();
+        }
           //sendGSMS('8809617620596',$mobileNumber,$msg,'C200022562c68264972b36.87730554','text&contacts');
           ?>
 
@@ -52,21 +55,29 @@
           <?php endif; ?>
 
           <?php
-          // Fetch all billing records
-          $fetchQuery = "SELECT * FROM flat_bill LEFT JOIN flats
-		  on flats.id = flat_bill.f_flatId";
 
-
-
-          // {{ edit_2 }}: Modify the query to filter by month and year if provided
-          if (isset($_GET['month']) && isset($_GET['year'])) {
-            $month = $_GET['month'];
-            $year = $_GET['year'];
-            $fetchQuery .= " WHERE f_month = '$month' AND f_year = '$year'";
-          }
-          // {{ edit_2 }} end
+          // Ensure month and year are set from GET parameters
+$month = isset($_GET['month']) ? $_GET['month'] : date('F'); // Default to current month
+$year = isset($_GET['year']) ? $_GET['year'] : date('Y'); 
+          // Fetch all billing records grouped by f_flatId
+          $fetchQuery = "SELECT flat_bill.f_flatId, owner_name, flatname, flat_bill.f_month, flat_bill.f_year, 
+                                p.f_paid_amount, p.f_due, 
+                                GROUP_CONCAT(f_flat_rent SEPARATOR ', ') AS flat_rents,
+                                GROUP_CONCAT(f_c_current_bill SEPARATOR ', ') AS current_bills,
+                                GROUP_CONCAT(f_guard_slry SEPARATOR ', ') AS guard_salaries,
+                                GROUP_CONCAT(f_c_center_various SEPARATOR ', ') AS other_expenses,
+                                GROUP_CONCAT(f_empty_flat SEPARATOR ', ') AS empty_flats,
+                                GROUP_CONCAT(f_date SEPARATOR ', ') AS dates,
+                                f_status
+                          FROM flat_bill 
+                          LEFT JOIN flats ON flats.id = flat_bill.f_flatId 
+                          LEFT JOIN payments p ON p.f_flatId = flat_bill.f_flatId AND p.f_month = flat_bill.f_month AND p.f_year = flat_bill.f_year
+                          WHERE flat_bill.f_month = '$month' AND flat_bill.f_year = '$year'
+                          GROUP BY flat_bill.f_flatId, owner_name, flatname, flat_bill.f_month, flat_bill.f_year, f_status";
 
           $result = mysqli_query($conn, $fetchQuery);
+
+        
 
           echo "
                     
@@ -104,73 +115,115 @@
                           </div>";
           // {{ edit_1 }} end
           echo "<table class='table table-bordered table-hover'>";
-          echo "<thead  class='thead-dark'>
-            <tr>
-                <th>Manager</th>
-                <th>Building</th>
-                <th>Month</th>
-                <th>Year</th>
-
-
-                <th>Flat&nbsp;Rent</th>
-               
-                <th>Current&nbsp;Bill</th>
-                <th>Guard&nbsp;Sallary</th>
-                <th>Other&nbsp;Expense</th>
-                <th>Empty&nbsp;Flat</th>
-
-                
-                <th>Total</th>
-                <th>Status</th>
-                <th class='text-center'>Action</th> <!-- Added Action column -->
-            </tr>
-          </thead>";
+          echo "<thead class='thead-dark'>
+                  <tr>
+                      <th>Manager</th>
+                      <th>Building</th>
+                      <th>Month</th>
+                      <th>Year</th>
+                      <th>Flat Rent</th>
+                      <th>Current Bill</th>
+                      <th>Guard Salary</th>
+                      <th>Other Expense</th>
+                      <th>Empty Flat </th>
+                      <th>Total</th>
+                      <th>Paid</th>
+                      <th>Due</th>
+                      <th>Status</th>
+                      
+                      <th class='text-center'>Action</th>
+                  </tr>
+                </thead>";
           echo "<tbody>";
 
           while ($row = mysqli_fetch_assoc($result)) {
-            if ($row['f_status'] == 'Pending') {
-              $f_status =  '<span class="badge badge-danger">' . htmlspecialchars($row['f_status']) . '</span>';
-            } else {
-              $f_status =  '<span class="badge badge-success">' . htmlspecialchars($row['f_status']) . '</span>';
-            }
+            // Calculate individual amounts
+            $flat_rents = explode(', ', $row['flat_rents']);
+            $current_bills = explode(', ', $row['current_bills']);
+            $guard_salaries = explode(', ', $row['guard_salaries']);
+            $other_expenses = explode(', ', $row['other_expenses']);
+            $empty_flats = explode(', ', $row['empty_flats']);
+            $dates = explode(', ', $row['dates']);
+            
+            // Calculate total amounts
+            $total_flat_rent = array_sum($flat_rents);
+            $total_current_bill = array_sum($current_bills);
+            $total_guard_salary = array_sum($guard_salaries);
+            $total_other_expense = array_sum($other_expenses);
+            $total_empty_flat = array_sum($empty_flats);
+            
+            // Calculate the final total as Flat Rent minus the sum of other expenses
+            $final_total = $total_flat_rent - ($total_current_bill + $total_guard_salary + $total_other_expense);
+            // print_r($final_total);
+            
+           // Update status based on final_total and f_paid_amount
+    if ($final_total == $row['f_paid_amount']) {
+      $f_status = 'Received'; // Changed to plain text
+    } else {
+        $f_status = 'Pending'; // Changed to plain text
+  }
             echo "<tr>
-              
-              <td>" . htmlspecialchars($row['owner_name']) . "</td>
-              <td>" . htmlspecialchars($row['flatname']) . "</td>
-              <td>" . htmlspecialchars($row['f_month']) . "</td>
-              <td>" . htmlspecialchars($row['f_year']) . "</td>
-              <td>৳" . number_format($row['f_flat_rent'], 0,) . "</td>
-              <td>৳" . number_format($row['f_c_current_bill'], 0,) . "</td>
-             <td>৳" . number_format($row['f_guard_slry'], 0,) . "</td>
-             <td>৳" . number_format($row['f_c_center_various'], 0,) . "</td>
-             <td>৳" . number_format($row['f_empty_flat'], 0,) . "</td>
+                  <td>" . htmlspecialchars($row['owner_name']) . "</td>
+                  <td>" . htmlspecialchars($row['flatname']) . "</td>
+                  <td>" . htmlspecialchars($row['f_month']) . "</td>
+                  <td>" . htmlspecialchars($row['f_year']) . "</td>
+                  <td class='amount'>";
 
-              <td>৳" . number_format($row['f_total'], 0,) . "</td>
-              <td>" . $f_status . "</td>
-              <td>";
-
-            if ($row['f_status'] == 'Pending') {
-              echo "<form method='POST' action=''>
-                      <input type='hidden' name='id' value='" . $row['f_id'] . "'>
-                      <input type='hidden' name='typ' value='Received'>
-                      <input type='hidden' name='mobile_number' value='" . $row['mobile_number'] . "'>
-                      <input type='hidden' name='f_total' value='" . $row['f_total'] . "'>
-                      <input type='hidden' name='f_month' value='" . $row['f_month'] . "'>
-                      <input type='hidden' name='f_year' value='" . $row['f_year'] . "'>
-                      <div class='d-flex '>
-                      <input type='number' name='paid_amount' placeholder='paid amount' required class='p-1 rounded mr-2'>
-                      <button type='submit' class='btn btn-success '>Received</button>
-                      </div>
-                    </form>";
-            } else {
-              echo "<form method='POST' action=''>
-                      <input type='hidden' name='id' value='" . $row['f_id'] . "'>
-					  <input type='hidden' name='typ' value='Pending'>
-                      <button type='submit' class='btn btn-warning text-white'>Unpaid</button>
-                    </form>";
+                  
+            
+            // Display Flat Rent with corresponding dates
+            foreach ($flat_rents as $index => $rent) {
+              echo "৳<span style='color: red; margin-right: 20px;'>" . number_format($rent, 0) . "</span> (Date: " . htmlspecialchars($dates[$index]) . ")<br>";
+          }
+          
+          echo "</td>
+                <td>"; 
+            
+            // Display Current Bill with corresponding dates
+            foreach ($current_bills as $index => $bill) {
+                echo "৳" . number_format($bill, 0) . " <br>";
             }
+            
             echo "</td>
-              </tr>";
+                  <td class='amount'>";
+            
+            // Display Guard Salary with corresponding dates
+            foreach ($guard_salaries as $index => $salary) {
+                echo "৳" . number_format($salary, 0) . " <br>";
+            }
+            
+            echo "</td>
+                  <td class='amount'>";
+            
+            // Display Other Expense with corresponding dates
+            foreach ($other_expenses as $index => $expense) {
+                echo "৳" . number_format($expense, 0) . " <br>";
+            }
+
+            echo "</td>
+            <td class='amount'>";
+      
+      // Display Other Expense with corresponding dates
+      foreach ($empty_flats as $index => $flat) {
+          echo "৳" . number_format($flat, 0) . " <br>";
+      }
+      
+            
+            echo "</td>
+                  <td>৳" . number_format($final_total, 0) . "</td>
+                  <td>৳" . number_format($row['f_paid_amount'], 0) . "</td>
+                  <td>৳" . number_format($row['f_due'], 0) . "</td>
+                  <td>" . htmlspecialchars($f_status) . "</td>
+                 
+                  <td>
+                      <form method='POST' action=''>
+                          <input type='hidden' name='id' value='" . $row['f_flatId'] . "'>
+                          <input type='number' name='paid_amount' placeholder='Enter amount' required>
+                          <button type='submit' class='btn btn-success'>Received</button>
+                         <a href='delete_reports.php?id=" . $row['f_flatId'] . "&month=" . $month . "&year=" . $year . "' class='btn btn-danger' onclick='return confirm(\"Are you sure you want to delete all records for Flat ID " . $row['f_flatId'] . " in " . $month . " " . $year . "?\");'>Delete</a>
+                      </form>
+                  </td>
+                  </tr>";
           }
 
           echo "</tbody></table>";

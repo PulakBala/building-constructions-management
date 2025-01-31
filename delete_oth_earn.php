@@ -4,9 +4,9 @@ include('connection.php');
 $id = $_GET['id'] ?? null;
 
 if ($id) {
-    $deleteQuery = "DELETE FROM projects WHERE id = '$id'";
+    $deleteQuery = "DELETE FROM oth_earn WHERE id = '$id'";
     if (mysqli_query($conn, $deleteQuery)) {
-        header("Location: add_payment_con.php?status=deleted");
+        header("Location: oth_earn.php?status=deleted");
         exit();
     } else {
         echo "Error deleting record: " . mysqli_error($conn);

@@ -40,10 +40,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $flatId = isset($_GET['flatId']) ? intval($_GET['flatId']) : 0;
 
 
-    // Calculate total amount
-    $totalAmount = $serviceCharge + $internetBill + $dishBill + $flatRent + $centerRent  + $atticRent + $donation + $developmentVarious - $commonBill - $guardBill - $centerVarious;
-
-    
+        // Calculate total amount
+    $totalAmount = $serviceCharge + $internetBill + $dishBill + $flatRent + $centerRent + $atticRent + $donation + $developmentVarious - $commonBill - $guardBill - $centerVarious;
 
     // Convert total amount to words
     $totalAmountWords = ucfirst(numberToWords($totalAmount));
@@ -88,12 +86,56 @@ Sobarmart , Tongi , Gazipur
     $lastInvoiceNumber = $row['last_invoice'] ? $row['last_invoice'] : 0;
     $newInvoiceNumber = $lastInvoiceNumber + 1; // Increment the last invoice number
 
-    $sql = "INSERT INTO flat_bill (f_date, f_month, f_year, f_service_charge, f_int_bill, f_dish_bill, f_flat_rent, f_c_current_bill, f_c_center_rent, f_guard_slry, f_empty_flat, f_c_center_various, f_atic_rent, f_d_donation, f_d_various_charge, f_status, f_flatId,f_total, f_invoice_number, f_details) 
-    VALUES (NOW(), '$selectedMonth', '$selectedYear', $serviceCharge, $internetBill, $dishBill, $flatRent, $commonBill, $centerRent, $guardBill, $emptyFlatBill, $centerVarious, $atticRent, $donation, $developmentVarious, 'Pending',$flatId,$totalAmount, $newInvoiceNumber, '$details')";
+    // $sql = "INSERT INTO flat_bill (f_date, f_month, f_year, f_service_charge, f_int_bill, f_dish_bill, f_flat_rent, f_c_current_bill, f_c_center_rent, f_guard_slry, f_empty_flat, f_c_center_various, f_atic_rent, f_d_donation, f_d_various_charge, f_status, f_flatId,f_total, f_invoice_number) 
+    // VALUES (NOW(), '$selectedMonth', '$selectedYear', $serviceCharge, $internetBill, $dishBill, $flatRent, $commonBill, $centerRent, $guardBill, $emptyFlatBill, $centerVarious, $atticRent, $donation, $developmentVarious, 'Pending',$flatId,$totalAmount, $newInvoiceNumber)";
+
+        $sql = "INSERT INTO flat_bill (
+        f_date, f_month, f_year, f_service_charge, f_int_bill, f_dish_bill, 
+        f_flat_rent, f_c_current_bill, f_c_center_rent, f_guard_slry, f_details, 
+        f_empty_flat, f_c_center_various, f_atic_rent, f_d_donation, f_d_various_charge, 
+        f_status, f_flatId, f_total, f_invoice_number
+    ) VALUES (
+        NOW(), '$selectedMonth', '$selectedYear', $serviceCharge, $internetBill, $dishBill, 
+        $flatRent, $commonBill, $centerRent, $guardBill, '$details', 
+        $emptyFlatBill, $centerVarious, $atticRent, $donation, $developmentVarious, 
+        'Pending', $flatId, $totalAmount, $newInvoiceNumber
+    )";
+
 
     // Execute SQL statement
     if ($conn->query($sql) === TRUE) {
         echo "Record inserted successfully.";
+        
+        // Check if a payment record already exists for the same flatId, month, and year
+        $checkPaymentSql = "SELECT * FROM payments WHERE f_flatId = $flatId AND f_month = '$selectedMonth' AND f_year = '$selectedYear'";
+        $checkResult = $conn->query($checkPaymentSql);
+
+        if ($checkResult->num_rows > 0) {
+            // If a record exists, update the total_amount
+            $row = $checkResult->fetch_assoc();
+            $newTotalAmount = $row['total_amount'] + $totalAmount; // Add the new total amount
+            $updatePaymentSql = "UPDATE payments SET total_amount = $newTotalAmount WHERE payment_id = " . $row['payment_id'];
+
+            if ($conn->query($updatePaymentSql) === TRUE) {
+                echo "Payment record updated successfully.";
+            } else {
+                echo "Error updating payment record: " . $conn->error;
+            }
+        } else {
+            // If no record exists, insert a new payment record
+            $paymentSql = "INSERT INTO payments (
+                f_flatId, paid_amount, payment_date, f_month, f_year, total_amount, f_due
+            ) VALUES (
+                $flatId, 0.00, NOW(), '$selectedMonth', '$selectedYear', $totalAmount, 0.00
+            )";
+
+            if ($conn->query($paymentSql) === TRUE) {
+                echo "Payment record inserted successfully.";
+            } else {
+                echo "Error inserting payment record: " . $conn->error;
+            }
+        }
+
         // sendGSMS('8809617620596', $mobileNumber, $msg, 'C200022562c68264972b36.87730554', 'text&contacts');
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;

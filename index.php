@@ -14,7 +14,6 @@ $searchQuery = isset($_POST['query']) ? $_POST['query'] : '';
 $flatData = getFlatBillSummary($currentMonth, $currentYear);
 // print_r($flatData);
 
-<<<<<<< HEAD
 // Fetch total expense amount for the current month and year
 $totalExpense = getTotalExpense($currentMonth, $currentYear);
 
@@ -30,24 +29,6 @@ function getTotalExpense($month, $year) {
     return $row['total_amount'];
 }
 
-
-
-
-=======
-// Query to calculate the total f_due
-$query = "SELECT SUM(f_due) AS total_due FROM flat_bill";
-$result = mysqli_query($conn, $query);
-
-// Check if the query ran successfully
-if ($result) {
-    $row = mysqli_fetch_assoc($result);
-    $totalDue = $row['total_due'];
-   
-} else {
-    echo "Error: " . mysqli_error($conn);
-}
-
->>>>>>> dbaf912d9b83dcc0883e4b5438ac0d7dc113fdf9
 ?>
 
 <main class="page-content">
@@ -56,18 +37,7 @@ if ($result) {
             <div class="form-group col-md-12">
                 <div class=" mt-4">
                     <div class="row">
-                        <!-- Bill Paid Card -->
-                        <div class="col-md-4 mb-4">
-                            <div class="card shadow border-0">
-                                <div class="card-header bg-primary text-white">
-                                    <h5 class="card-title">Bill Paid</h5>
-                                </div>
-                                <div class="card-body">
-                                    <h2 class="card-text text-success"><?= get_acc('0', date('F'), date('Y'), 'COUNT-TR-MONTH') ?>/<span class="text-info">131</span></h2>
-                                    <p class="card-text text-center">Amount paid on <?= date('F') ?></p>
-                                </div>
-                            </div>
-                        </div>
+                       
 
                         <!-- Expense Card -->
                         <div class="col-md-4 mb-4">
@@ -96,13 +66,12 @@ if ($result) {
                         </div>
 
 
-                        <div class="col-md-4 mb-4">
+                       <div class="col-md-4 mb-4">
                             <div class="card shadow border-0">
                                 <div class="card-header bg-danger text-white">
                                     <h5 class="card-title">Total Due</h5>
                                 </div>
                                 <div class="card-body">
-<<<<<<< HEAD
                                     <h2 class="card-text text-success"><?= get_acc('0', date('F'), date('Y'), 'DUE-MONTH') ?> .TK</h2>
                                     <p class="card-text text-center">Total due amount <?= date('F') ?></p>
                                 </div>
@@ -118,10 +87,6 @@ if ($result) {
                                 <div class="card-body">
                                 <h2> ৳<?php echo number_format($totalExpense, 2); ?></h2>
                                     <p class="card-text text-center">Total expense amount <?= date('F') ?></p>
-=======
-                                <h2 class="card-text text-success"><?= htmlspecialchars($totalDue) ?></h2>
-                                <p class="card-text text-center">Amount due in <?= date('F') ?></p>
->>>>>>> dbaf912d9b83dcc0883e4b5438ac0d7dc113fdf9
                                 </div>
                             </div>
                         </div>

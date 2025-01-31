@@ -4,10 +4,10 @@
 
 <main class="page-content">
   <div class="container-fluid">
-    <div class="">
+    <div class="row">
       <section class="container my-4">
 
-        <div class="justify-content-end mb-4">
+        <div class="row justify-content-end mb-4">
           <div class="col-md-6">
             <!-- Search Input with Bootstrap Design -->
             <div class="input-group">
@@ -34,7 +34,7 @@
           ?>
               <div class="col-md-4 mb-4">
                 <div class="card">
-                  <div class="card-body  shadow-lg rounded" style="background-color: #f8f9fa;">
+                  <div class="card-body p-4 shadow-lg rounded" style="background-color: #f8f9fa;">
                     <h5 class="card-title">
                       <span class="fw-bold" style="color: #3498db;">Building Name:</span>
                       <span class="text-muted"><?php echo htmlspecialchars($data["name"]); ?></span>
@@ -72,7 +72,7 @@
 
                     <!-- Edit and Delete buttons -->
                     <a href="#" class="btn btn-warning btn-sm">Edit</a>
-                    <a href="#" class="btn btn-danger btn-sm">Delete</a>
+                     <a href="delete_new_building.php?id=<?php echo $data['id']; ?>" class="btn btn-danger btn-sm" onclick='return confirm("Are you sure you want to delete this record?");'>Delete</a>
                     <a href="add_new_flat.php?name=<?php echo urlencode($data['name']); ?>" class="btn btn-danger btn-sm">Add Flat</a>
                     <a href="all_flat_information.php?name=<?php echo urldecode($data['name']); ?>" class="btn btn-danger btn-sm">Details</a>
 
