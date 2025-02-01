@@ -157,7 +157,7 @@ $stmt->close();
                      
                       <td>
                         <a href="javascript:void(0);" onclick="loadEditForm(<?php echo htmlspecialchars($expense['id']); ?>);" class="btn btn-sm btn-warning">Edit</a>
-                        <a href="javascript:void(0);" onclick="openDeleteModal('delete_add_payment.php?table=expense&id=<?php echo htmlspecialchars($expense['id']); ?>');" class="btn btn-sm btn-danger">Delete</a>
+                        <a href="javascript:void(0);" onclick="openDeleteModal('delete_personal_expense.php?table=expense&id=<?php echo htmlspecialchars($expense['id']); ?>');" class="btn btn-sm btn-danger">Delete</a>
                       </td>
                     </tr>
                   <?php endforeach; ?>

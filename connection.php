@@ -131,8 +131,8 @@ function get_expense_sum($cmd)
   }
 
   if ($cmd == 'THIS-MONTH') {
-    $gm = date('m');
-    $gy = date('Y');
+    $gm = date('m', strtotime('last month'));
+    $gy = date('Y', strtotime('last month'));
     $fetchQuery = "SELECT SUM(ex_amount) AS Total_exp FROM expenses WHERE ex_month = '{$gm}' AND ex_year ='{$gy}'";
     $result = mysqli_query($conn, $fetchQuery);
     $row = mysqli_fetch_assoc($result);
