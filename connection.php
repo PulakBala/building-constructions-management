@@ -87,24 +87,19 @@ function get_acc($FltID, $month, $year, $cmd)
 function getFlatBillSummary($month, $year) {
   global $conn;
   $query = "
-      SELECT 
-          fb.f_flatId,
-          f.flatname,
-          f.owner_name,
-          SUM(p.total_amount) AS total_collected,
-          SUM(p.f_due) AS f_due
-      FROM 
-          flat_bill fb
-      LEFT JOIN 
-          flats f ON fb.f_flatId = f.id
-      LEFT JOIN 
-          payments p ON fb.f_flatId = p.f_flatId AND p.f_month = '{$month}' AND p.f_year = '{$year}'
-      WHERE 
-          fb.f_month = '{$month}' 
-          AND fb.f_year = '{$year}' 
-         
-      GROUP BY 
-          fb.f_flatId, f.flatname
+SELECT 
+    p.f_flatId,
+    f.flatname,
+    f.owner_name,
+    p.total_amount,
+    (p.total_amount - p.f_paid_amount) AS due
+FROM 
+    payments p
+LEFT JOIN 
+    flats f ON p.f_flatId = f.id
+WHERE 
+    p.f_month = 'january' 
+    AND p.f_year = '2025'
   ";
   $result = mysqli_query($conn, $query);
   if (!$result) {

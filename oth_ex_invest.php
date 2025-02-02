@@ -153,7 +153,11 @@ $invests = mysqli_fetch_all($result, MYSQLI_ASSOC);
                         <?php endforeach; ?>
                     </tbody>
                 </table>
-
+                <!-- Display total amount -->
+                <div class="mt-3">
+                    <strong>Total Amount: </strong>
+                    <span><?php echo htmlspecialchars(number_format(array_sum(array_column($invests, 'amount')), 0)); ?> ৳</span>
+                </div>
                 <!-- Professional Pagination -->
                 <div class="d-flex justify-content-center align-items-center mt-4">
                     <div class="d-flex gap-3">

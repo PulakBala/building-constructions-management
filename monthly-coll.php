@@ -21,8 +21,8 @@
             $new_paid_amount = isset($_POST['paid_amount']) ? floatval($_POST['paid_amount']) : 0;
             
             // Update query modified to include month and year checks
-            $month = isset($_GET['month']) ? $_GET['month'] : date('F'); // Get the month from GET parameters
-            $year = isset($_GET['year']) ? $_GET['year'] : date('Y'); // Get the year from GET parameters
+            $month = isset($_GET['month']) ? $_GET['month'] : date('F', strtotime('-1 month')); // Get the previous month
+          $year = isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('-1 month')); // Get the year of the previous month
         
             // Update f_paid_amount and f_due in one query
             $updateQuery = "UPDATE payments
@@ -57,8 +57,8 @@
           <?php
 
           // Ensure month and year are set from GET parameters
-$month = isset($_GET['month']) ? $_GET['month'] : date('F'); // Default to current month
-$year = isset($_GET['year']) ? $_GET['year'] : date('Y'); 
+          $month = isset($_GET['month']) ? $_GET['month'] : date('F', strtotime('-1 month')); // Get the previous month
+          $year = isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('-1 month')); // Get the year of the previous month
           // Fetch all billing records grouped by f_flatId
           $fetchQuery = "SELECT flat_bill.f_flatId, owner_name, flatname, flat_bill.f_month, flat_bill.f_year, 
                                 p.f_paid_amount, p.f_due, 
@@ -68,7 +68,8 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
                                 GROUP_CONCAT(f_c_center_various SEPARATOR ', ') AS other_expenses,
                                 GROUP_CONCAT(f_empty_flat SEPARATOR ', ') AS empty_flats,
                                 GROUP_CONCAT(f_date SEPARATOR ', ') AS dates,
-                                f_status
+                                f_status,
+                                total_amount
                           FROM flat_bill 
                           LEFT JOIN flats ON flats.id = flat_bill.f_flatId 
                           LEFT JOIN payments p ON p.f_flatId = flat_bill.f_flatId AND p.f_month = flat_bill.f_month AND p.f_year = flat_bill.f_year
@@ -212,7 +213,7 @@ $year = isset($_GET['year']) ? $_GET['year'] : date('Y');
             echo "</td>
                   <td>৳" . number_format($final_total, 0) . "</td>
                   <td>৳" . number_format($row['f_paid_amount'], 0) . "</td>
-                  <td>৳" . number_format($row['f_due'], 0) . "</td>
+                 <td>৳" . number_format($row['total_amount'] - $row['f_paid_amount'], 0) . "</td>
                   <td>" . htmlspecialchars($f_status) . "</td>
                  
                   <td>

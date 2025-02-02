@@ -9,7 +9,7 @@
 $currentMonth = date('F', strtotime('last month')); // Previous month er naam
 $currentYear = date('Y', strtotime('last month'));  // Previous month er year
 
-var_dump($currentMonth);
+// var_dump($currentMonth);
 
 // Check if a search query is provided
 $searchQuery = isset($_POST['query']) ? $_POST['query'] : '';
@@ -126,8 +126,8 @@ function getTotalExpense($month, $year) {
                                     <td><?php echo $flat['flatname']; ?></td>
 
 
-                                    <td><?php echo number_format($flat['total_collected'], 2); ?></td>
-                                    <td><?php echo number_format($flat['f_due'], 2); ?></td>
+                                    <td><?php echo number_format($flat['total_amount'], 2); ?></td>
+                                    <td><?php echo number_format($flat['due'], 2); ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
