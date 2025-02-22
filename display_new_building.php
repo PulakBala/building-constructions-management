@@ -66,8 +66,19 @@
                     </p>
 
                     <p class="card-text">
-                      <span class="fw-bold" style="color: #e67e22;">Created At:</span>
-                      <span class="text-muted"><?php echo htmlspecialchars($data["created_at"]); ?></span>
+                      <span class="fw-bold" style="color: #e67e22;">Total Amount:</span>
+                      <span class="text-muted" id="totalAmount_<?php echo $data['id']; ?>">
+                        <?php
+                          // Fetch total amount for the building
+                          $sqlTotal = "SELECT SUM(rent) as total_rent FROM flat_info WHERE bulding_name = ?";
+                          $stmtTotal = $conn->prepare($sqlTotal);
+                          $stmtTotal->bind_param("s", $data['name']);
+                          $stmtTotal->execute();
+                          $resultTotal = $stmtTotal->get_result();
+                          $totalRow = $resultTotal->fetch_assoc();
+                          echo htmlspecialchars(number_format($totalRow['total_rent'], 0)); // Display total amount
+                        ?>
+                      </span>
                     </p>
 
                     <!-- Edit and Delete buttons -->

@@ -34,6 +34,19 @@ if (isset($_SESSION['sa_crm_drs_id']) and $_SESSION['sa_crm_drs_id'] == true) {
 
     </li>
 
+    <li> <a href="#" data-toggle="collapse" data-target="#construction-tables" class="collapsed active"><i class="fa fa-briefcase"></i>
+        <span class="nav-label">CONSTRUCTION</span><span class="fa fa-chevron-left pull-right"></span></a>
+      <ul class="sub-menu collapse" id="construction-tables">
+         <li><a href="add_project.php">ADD PROJECT</a></li>
+      <li><a href="project_display.php">PROJECT DISPLAY</a></li>
+
+      <!-- <li><a href="add_others_expense.php">ADD OTHERS EXPENSE</a></li>
+      <li><a href="others_expense_display.php">OTHER EXPENSE DISPLAY</a></li> -->
+       
+
+      </ul>
+    </li>
+
 
 
     <li> <a href="add_new_building.php"><i class="fa fa-external-link"></i> <span class="nav-label">ADD NEW BUILDING</span></a> </li>
@@ -46,19 +59,11 @@ if (isset($_SESSION['sa_crm_drs_id']) and $_SESSION['sa_crm_drs_id'] == true) {
     <li> <a href="create_main_assets.php"><i class="fa fa-home"></i> <span class="nav-label">ADD NEW ASSETS</span></a> </li>
     <li> <a href="display_main_assets.php"><i class="fa fa-home"></i> <span class="nav-label">ASSETS</span></a> </li>
 
+    <li><a href="add_others_expense.php"><i class="fa fa-plus"></i> ADD OTHERS EXPENSE</a></li>
+    <li><a href="others_expense_display.php"><i class="fa fa-eye"></i> OTHER EXPENSE DISPLAY</a></li>
 
-    <li> <a href="#" data-toggle="collapse" data-target="#construction-tables" class="collapsed active"><i class="fa fa-briefcase"></i>
-        <span class="nav-label">CONSTRUCTION</span><span class="fa fa-chevron-left pull-right"></span></a>
-      <ul class="sub-menu collapse" id="construction-tables">
-         <li><a href="add_project.php">ADD PROJECT</a></li>
-      <li><a href="project_display.php">PROJECT DISPLAY</a></li>
 
-      <li><a href="add_others_expense.php">ADD OTHERS EXPENSE</a></li>
-      <li><a href="others_expense_display.php">OTHER EXPENSE DISPLAY</a></li>
-       
 
-      </ul>
-    </li>
 
 
 

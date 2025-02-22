@@ -42,7 +42,10 @@
           $result = $stmt->get_result();
 
           if ($result->num_rows > 0) {
-              while ($data = $result->fetch_assoc()) {
+            $all_data = []; // Create an array to store all data
+            while ($row = $result->fetch_assoc()) {
+                $all_data[] = $row; // Store each row in the array
+            
           ?>
                     <div class="table-responsive">
         <table class="table table-striped table-hover">
@@ -62,7 +65,7 @@
             <tbody>
                 <?php
                 $counter = 1; // To display serial numbers
-                while ($data = $result->fetch_assoc()) {
+                foreach ($all_data as $data) {
                 ?>
                     <tr>
                         <td><?php echo $counter++; ?></td>
@@ -86,6 +89,10 @@
                 ?>
             </tbody>
         </table>
+        <div class="mt-3">
+                      <strong>Total Amount: </strong>
+                      <span><?php echo htmlspecialchars(number_format(array_sum(array_column($all_data, 'rent')), 0)); ?> ৳</span>
+                  </div> 
     </div>
           <?php
               }

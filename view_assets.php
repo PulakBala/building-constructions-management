@@ -98,7 +98,7 @@ foreach ($assets as $asset) {
                                 <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($asset['date']))); ?></td>
                                
                                 <td>
-                                <!--<a href="#" class="btn btn-sm btn-warning">Edit</a>-->
+                                 <a href="#" class="btn btn-sm btn-warning" onclick="loadEditForm(<?php echo $asset['id']; ?>)">Edit</a>
 
                                  <a href="delete_view_assets.php?id=<?php echo $asset['id']; ?>" class="btn btn-sm btn-danger">Delete</a>
                                 </td>
@@ -173,8 +173,46 @@ foreach ($assets as $asset) {
         </div>
     </div>
 </div>
-
 <script>
+    // Function to load edit form into the modal
+    function loadEditForm(id) {
+        $.ajax({
+            url: 'edit_new_assets.php',
+            type: 'GET',
+            data: { id: id, table: 'assets' },
+            success: function(response) {
+                $('#editModal .modal-body').html(response);
+                $('#editModal').modal('show');
+
+                // Attach submit event handler to the form
+                $('#editForm').on('submit', function(event) {
+                    event.preventDefault(); // Prevent default form submission
+
+                    $.ajax({
+                        url: $(this).attr('action'), // Ensure this is correct
+                        type: 'POST',
+                        data: $(this).serialize(),
+                        success: function(response) {
+                            // Handle success (e.g., close modal, show success message)
+                            $('#editModal').modal('hide');
+                            toastr.success('Record updated successfully!');
+                            location.reload(); // Refresh the page to see changes
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('AJAX Error:', status, error); // Log error
+                            toastr.error('Error updating record.');
+                        }
+                    });
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', status, error); // Log error
+            }
+        });
+    }
+</script>
+
+<!-- <script>
     // Function to load edit form into the modal
     function loadEditForm(id) {
         $.ajax({
@@ -209,9 +247,10 @@ foreach ($assets as $asset) {
                     });
                 });
             }
+           
         });
     }
-</script>
+</script> -->
 
 <script>
     function confirmSubmission() {

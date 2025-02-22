@@ -5,13 +5,13 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-$table = 'assets'; // Hardcoded for construction table
+$table = 'main_assets'; // Hardcoded for construction table
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['id'])) {
     $id = $_GET['id'];
 
     // Fetch the current data for the given ID
-    $sql = "SELECT * FROM assets WHERE id = ?";
+    $sql = "SELECT * FROM main_assets WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('i', $id);
     $stmt->execute();
@@ -28,24 +28,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['id'])) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id'])) {
     $id = $_POST['id'];
     $asset_name = $_POST['asset_name'];
-    $asset_value = $_POST['asset_value'];
-
-    $date = $_POST['date'];
-
-
     try {
         $sql = "UPDATE $table SET 
-                asset_name = ?, 
-                asset_value = ?, 
-                
-                date = ? 
+                asset_name = ?
                 WHERE id = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param('sssi', 
+        $stmt->bind_param('si', 
             $asset_name, 
-            $asset_value, 
-           
-            $date, 
             $id
         );
 
@@ -70,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id'])) {
 }
 ?>
 
-<form id="editForm" action="edit_new_assets.php" method="post">
+<form id="editForm" action="edit_asset.php" method="post">
     <input type="hidden" name="id" value="<?php echo htmlspecialchars($record['id'] ?? ''); ?>">
     
     
@@ -80,19 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id'])) {
                value="<?php echo htmlspecialchars($record['asset_name'] ?? ''); ?>" required>
     </div>
 
-    <div class="form-group mb-3">
-        <label for="asset_value">Asset Value:</label>
-        <input type="number" class="form-control" id="asset_value" name="asset_value" 
-               value="<?php echo htmlspecialchars($record['asset_value'] ?? ''); ?>" required>
-    </div>
-    
    
-    
-    <div class="form-group mb-3">
-        <label for="date">Date:</label>
-        <input type="date" class="form-control" id="date" name="date" 
-                  value="<?php echo htmlspecialchars($record['date'] ?? ''); ?>" required>
-    </div>
    
     <button type="submit" class="btn btn-primary">Update</button>
 </form>

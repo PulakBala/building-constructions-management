@@ -21,7 +21,7 @@
             $new_paid_amount = isset($_POST['paid_amount']) ? floatval($_POST['paid_amount']) : 0;
             
             // Update query modified to include month and year checks
-            $month = isset($_GET['month']) ? $_GET['month'] : date('F', strtotime('-1 month')); // Get the previous month
+          $month = isset($_GET['month']) ? $_GET['month'] : date('F', strtotime('-1 month')); // Get the previous month
           $year = isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('-1 month')); // Get the year of the previous month
         
             // Update f_paid_amount and f_due in one query

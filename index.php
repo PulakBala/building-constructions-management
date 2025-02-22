@@ -9,6 +9,10 @@
 $currentMonth = date('F', strtotime('last month')); // Previous month er naam
 $currentYear = date('Y', strtotime('last month'));  // Previous month er year
 
+// New variables for totalExpense
+$currentMonthForExpense = date('F'); // Current month er naam for totalExpense
+$currentYearForExpense = date('Y');   // Current year for totalExpense
+
 // var_dump($currentMonth);
 
 // Check if a search query is provided
@@ -19,7 +23,7 @@ $flatData = getFlatBillSummary($currentMonth, $currentYear);
 // print_r($flatData);
 
 // Fetch total expense amount for the current month and year
-$totalExpense = getTotalExpense($currentMonth, $currentYear);
+$totalExpense = getTotalExpense($currentMonthForExpense, $currentYearForExpense);
 
 // Function to fetch total expense amount
 function getTotalExpense($month, $year) {
@@ -90,7 +94,7 @@ function getTotalExpense($month, $year) {
                                 </div>
                                 <div class="card-body">
                                 <h2> ৳<?php echo number_format($totalExpense, 2); ?></h2>
-                                    <p class="card-text text-center">Total expense amount <?= $currentMonth ?></p>
+                                    <p class="card-text text-center">Total expense amount <?= date('F') ?></p>
                                 </div>
                             </div>
                         </div>

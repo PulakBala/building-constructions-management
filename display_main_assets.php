@@ -102,6 +102,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                       <a href="view_assets.php?id=<?php echo $data['id']; ?>" class="btn btn-info btn-sm">
                         <i class="fas fa-eye"></i> View
                       </a>
+                      <a href="#" onclick="loadEditForm(<?php echo $data['id']; ?>)" class="btn btn-warning btn-sm">
+                        <i class="fas fa-edit"></i>
+                      </a>
                       <a href="delete_main_assets.php?id=<?php echo $data["id"]; ?>" class="btn btn-danger btn-sm" onclick='return confirm("Are you sure you want to delete this record?");'>
                         <i class="fas fa-trash"></i> Delete
                       </a>
@@ -180,6 +183,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   </div>
 </div>
 
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalLabel">Edit Asset</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- The form will be loaded here via AJAX -->
+      </div>
+     
+    </div>
+  </div>
+</div>
+
 
 
 <script>
@@ -190,6 +209,48 @@ function setNoteId(id, noteNumber) {
     document.getElementById('note_id').value = id;
     document.getElementById('note_number_display').innerText = noteNumber;
 }
+</script>
+
+
+
+<script>
+    // Function to load edit form into the modal
+    function loadEditForm(id) {
+        $.ajax({
+            url: 'edit_asset.php',
+            type: 'GET',
+            data: { id: id, table: 'main_assets' },
+            success: function(response) {
+                $('#editModal .modal-body').html(response);
+                $('#editModal').modal('show');
+
+                // Attach submit event handler to the form
+                $('#editForm').on('submit', function(event) {
+                    event.preventDefault(); // Prevent default form submission
+                  
+
+                    $.ajax({
+                        url: $(this).attr('action'), // Ensure this is correct
+                        type: 'POST',
+                        data: $(this).serialize(),
+                        success: function(response) {
+                            // Handle success (e.g., close modal, show success message)
+                            $('#editModal').modal('hide');
+                            toastr.success('Record updated successfully!');
+                            location.reload(); // Refresh the page to see changes
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('AJAX Error:', status, error); // Log error
+                            toastr.error('Error updating record.');
+                        }
+                    });
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', status, error); // Log error
+            }
+        });
+    }
 </script>
 
 <?php include('footer.php'); ?>
