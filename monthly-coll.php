@@ -239,8 +239,10 @@
                       <form method='POST' action=''>
                           <input type='hidden' name='id' value='" . $row['f_flatId'] . "'>
                           <input type='number' name='paid_amount' placeholder='Enter amount' required>
-                          <button type='submit' class='btn btn-success'>Received</button>
-                         <a href='delete_reports.php?id=" . $row['f_flatId'] . "&month=" . $month . "&year=" . $year . "' class='btn btn-danger' onclick='return confirm(\"Are you sure you want to delete all records for Flat ID " . $row['f_flatId'] . " in " . $month . " " . $year . "?\");'>Delete</a>
+                          <button type='submit' class='btn btn-success mt-2'>Received</button>
+                           
+                        <a href='javascript:void(0);' onclick='loadEditForm(" . $row['f_flatId'] . ", \"" . $month . "\", \"" . $year . "\")' class='btn btn-primary mt-2'>Edit</a>
+                         <a href='delete_reports.php?id=" . $row['f_flatId'] . "&month=" . $month . "&year=" . $year . "' class='btn btn-danger mt-2' onclick='return confirm(\"Are you sure you want to delete all records for Flat ID " . $row['f_flatId'] . " in " . $month . " " . $year . "?\");'>Delete</a>
                       </form>
                   </td>
                   </tr>";
@@ -251,6 +253,61 @@
           $conn->close();
           ?>
         </div>
+
+
+      <!-- Add Modal HTML -->
+      <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editModalLabel">Edit and update</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <!-- Content will be loaded here from "edit_addData.php" -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+     function loadEditForm(id, month, year) {
+    $.ajax({
+        url: 'edit_monthly_coll.php',
+        type: 'GET',
+        data: {
+            f_flatId: id,
+            month: month,
+            year: year
+        },
+        success: function(response) {
+            $('#editModal .modal-body').html(response);
+            $('#editModal').modal('show');
+
+            // Attach submit event handler to all forms
+            $('#editModal form').on('submit', function(event) {
+                event.preventDefault();
+                
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        $('#editModal').modal('hide');
+                        toastr.success('Record updated successfully!');
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error:', status, error);
+                        toastr.error('Error updating record.');
+                    }
+                });
+            });
+        }
+    });
+}
+      </script>
+
 
         <!-- Include Font Awesome for icons -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
