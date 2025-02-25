@@ -61,22 +61,26 @@
           $year = isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('-1 month')); // Get the year of the previous month
           // Fetch all billing records grouped by f_flatId
           $fetchQuery = "SELECT flat_bill.f_flatId, owner_name, flatname, flat_bill.f_month, flat_bill.f_year, 
-                                p.f_paid_amount, p.f_due, 
-                                GROUP_CONCAT(f_flat_rent SEPARATOR ', ') AS flat_rents,
-                                GROUP_CONCAT(f_c_current_bill SEPARATOR ', ') AS current_bills,
-                                GROUP_CONCAT(f_guard_slry SEPARATOR ', ') AS guard_salaries,
-                                GROUP_CONCAT(f_c_center_various SEPARATOR ', ') AS other_expenses,
-                                GROUP_CONCAT(f_empty_flat SEPARATOR ', ') AS empty_flats,
-                                GROUP_CONCAT(f_date SEPARATOR ', ') AS dates,
+                                SUM( DISTINCT p.f_paid_amount) AS f_paid_amount,
+                                SUM( DISTINCT p.f_due) AS f_due, 
+                                GROUP_CONCAT(DISTINCT f_flat_rent SEPARATOR ', ') AS flat_rents,
+                                GROUP_CONCAT( f_c_current_bill SEPARATOR ', ') AS current_bills,
+                                GROUP_CONCAT( f_guard_slry SEPARATOR ', ') AS guard_salaries,
+                                GROUP_CONCAT( f_c_center_various SEPARATOR ', ') AS other_expenses,
+                                GROUP_CONCAT( f_empty_flat SEPARATOR ', ') AS empty_flats,
+                                GROUP_CONCAT( f_date SEPARATOR ', ') AS dates,
                                 f_status,
-                                total_amount
+                                total_amount,
+                                SUM(DISTINCT fi.rent) AS total_collected
                           FROM flat_bill 
                           LEFT JOIN flats ON flats.id = flat_bill.f_flatId 
                           LEFT JOIN payments p ON p.f_flatId = flat_bill.f_flatId AND p.f_month = flat_bill.f_month AND p.f_year = flat_bill.f_year
+                          LEFT JOIN flat_info fi ON fi.bulding_name = owner_name 
                           WHERE flat_bill.f_month = '$month' AND flat_bill.f_year = '$year'
                           GROUP BY flat_bill.f_flatId, owner_name, flatname, flat_bill.f_month, flat_bill.f_year, f_status";
 
           $result = mysqli_query($conn, $fetchQuery);
+
 
         
 
@@ -127,6 +131,7 @@
                       <th>Guard Salary</th>
                       <th>Other Expense</th>
                       <th>Empty Flat </th>
+                      <th>Total Collected</th>
                       <th>Total</th>
                       <th>Paid</th>
                       <th>Due</th>
@@ -144,6 +149,7 @@
             $guard_salaries = explode(', ', $row['guard_salaries']);
             $other_expenses = explode(', ', $row['other_expenses']);
             $empty_flats = explode(', ', $row['empty_flats']);
+          
             $dates = explode(', ', $row['dates']);
             
             // Calculate total amounts
@@ -163,6 +169,14 @@
     } else {
         $f_status = 'Pending'; // Changed to plain text
   }
+          
+
+      
+
+
+
+
+          
             echo "<tr>
                   <td>" . htmlspecialchars($row['owner_name']) . "</td>
                   <td>" . htmlspecialchars($row['flatname']) . "</td>
@@ -208,7 +222,12 @@
       foreach ($empty_flats as $index => $flat) {
           echo "৳" . number_format($flat, 0) . " <br>";
       }
-      
+
+
+      // ... existing code ...
+
+      // Display total collected amount
+      echo "<td>৳" . number_format($row['total_collected'], 0) . "</td>"; 
             
             echo "</td>
                   <td>৳" . number_format($final_total, 0) . "</td>
