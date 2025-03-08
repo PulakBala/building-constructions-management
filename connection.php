@@ -84,27 +84,59 @@ function get_acc($FltID, $month, $year, $cmd)
   }
 }
 
+// function getFlatBillSummary($month, $year) {
+//   global $conn;
+//   $query = "
+// SELECT 
+//     p.f_flatId,
+//     f.flatname,
+//     f.owner_name,
+//     p.total_amount,
+//     (p.total_amount - p.f_paid_amount) AS due
+// FROM 
+//     payments p
+// LEFT JOIN 
+//     flats f ON p.f_flatId = f.id
+// WHERE 
+//     p.f_month = 'january' 
+//     AND p.f_year = '2025'
+//   ";
+//   $result = mysqli_query($conn, $query);
+//   if (!$result) {
+//       die("Query Error: " . mysqli_error($conn));
+//   }
+//   return mysqli_fetch_all($result, MYSQLI_ASSOC);
+// }
+
+
+
 function getFlatBillSummary($month, $year) {
   global $conn;
   $query = "
-SELECT 
-    p.f_flatId,
-    f.flatname,
-    f.owner_name,
-    p.total_amount,
-    (p.total_amount - p.f_paid_amount) AS due
-FROM 
-    payments p
-LEFT JOIN 
-    flats f ON p.f_flatId = f.id
-WHERE 
-    p.f_month = 'january' 
-    AND p.f_year = '2025'
+  SELECT 
+      p.f_flatId,
+      f.flatname,
+      f.owner_name,
+      p.total_amount,
+      (p.total_amount - p.f_paid_amount) AS due
+  FROM 
+      payments p
+  LEFT JOIN 
+      flats f ON p.f_flatId = f.id
+  WHERE 
+      p.f_month = ? 
+      AND p.f_year = ?
   ";
-  $result = mysqli_query($conn, $query);
+  
+  $stmt = $conn->prepare($query);
+  $stmt->bind_param("ss", $month, $year);
+  $stmt->execute();
+  $result = $stmt->get_result();
+  
   if (!$result) {
       die("Query Error: " . mysqli_error($conn));
   }
+  
   return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
@@ -113,26 +145,25 @@ WHERE
 
 
 
-
-function get_expense_sum($cmd)
+function get_expense_sum($month = null, $year = null)
 {
   global $conn;
 
-  if ($cmd == 'ALL') {
+  if ($month === null && $year === null) {
+    // Original 'ALL' case remains unchanged
     $fetchQuery = "SELECT SUM(ex_amount) AS Total_exp FROM expenses";
     $result = mysqli_query($conn, $fetchQuery);
     $row = mysqli_fetch_assoc($result);
-    echo number_format((float)$row['Total_exp'], 2, '.', ',');
-  }
-
-  if ($cmd == 'THIS-MONTH') {
-    $gm = date('m');
-    $gy = date('Y');
-    $fetchQuery = "SELECT SUM(ex_amount) AS Total_exp FROM expenses WHERE ex_month = '{$gm}' AND ex_year ='{$gy}'";
-    $result = mysqli_query($conn, $fetchQuery);
-    $row = mysqli_fetch_assoc($result);
-    echo number_format((float)$row['Total_exp'], 0);
-    //echo $fetchQuery;
+    return number_format((float)$row['Total_exp'], 2, '.', ',');
+  } else {
+    // Use the month number directly since it's already stored as numbers in the database
+    $fetchQuery = "SELECT SUM(ex_amount) AS Total_exp FROM expenses WHERE ex_month = ? AND ex_year = ?";
+    $stmt = $conn->prepare($fetchQuery);
+    $stmt->bind_param("ss", $month, $year);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    return number_format((float)($row['Total_exp'] ?? 0), 2, '.', ',');
   }
 }
 

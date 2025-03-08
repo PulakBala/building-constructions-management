@@ -23,6 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $commonBill = isset($_GET['commonBill']) ? floatval($_GET['commonBill']) : 0;
     $centerRent = isset($_GET['centerRent']) ? floatval($_GET['centerRent']) : 0;
     $centerVarious = isset($_GET['centerVarious']) ? floatval($_GET['centerVarious']) : 0;
+    $flatDueNote = isset($_GET['note']) ? htmlspecialchars($_GET['note']) : '';
+    $flatDue = isset($_GET['flatDue']) ? floatval($_GET['flatDue']) : 0;
     $guardBill = isset($_GET['guardBill']) ? floatval($_GET['guardBill']) : 0;
     $details = isset($_GET['details']) ? htmlspecialchars($_GET['details']) : '';
     $emptyFlatBill = isset($_GET['emptyFlatBill']) ? floatval($_GET['emptyFlatBill']) : 0;
@@ -40,8 +42,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $flatId = isset($_GET['flatId']) ? intval($_GET['flatId']) : 0;
 
 
-        // Calculate total amount
-    $totalAmount = $serviceCharge + $internetBill + $dishBill + $flatRent + $centerRent + $atticRent + $donation + $developmentVarious - $commonBill - $guardBill - $centerVarious;
+    // Calculate total amount
+    $totalAmount = $serviceCharge + $internetBill + $dishBill + $flatRent + $flatDue +  $centerRent + $atticRent + $donation + $developmentVarious - $commonBill - $guardBill - $centerVarious;
 
     // Convert total amount to words
     $totalAmountWords = ucfirst(numberToWords($totalAmount));
@@ -57,6 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $msg .= ' GuardSallary - ' . $guardBill;
     $msg .= ' EmptyFlatBill - ' . $emptyFlatBill;
     $msg .= ' CenterVarious - ' . $centerVarious;
+    $msg .= 'Flat Due - ' . $flatDue;
     $msg .= ' AtticRent - ' . $atticRent;
     $msg .= ' Donation - ' . $donation;
     $msg .= ' DevelopmentVarious - ' . $developmentVarious;
@@ -86,17 +89,16 @@ Sobarmart , Tongi , Gazipur
     $lastInvoiceNumber = $row['last_invoice'] ? $row['last_invoice'] : 0;
     $newInvoiceNumber = $lastInvoiceNumber + 1; // Increment the last invoice number
 
-    // $sql = "INSERT INTO flat_bill (f_date, f_month, f_year, f_service_charge, f_int_bill, f_dish_bill, f_flat_rent, f_c_current_bill, f_c_center_rent, f_guard_slry, f_empty_flat, f_c_center_various, f_atic_rent, f_d_donation, f_d_various_charge, f_status, f_flatId,f_total, f_invoice_number) 
-    // VALUES (NOW(), '$selectedMonth', '$selectedYear', $serviceCharge, $internetBill, $dishBill, $flatRent, $commonBill, $centerRent, $guardBill, $emptyFlatBill, $centerVarious, $atticRent, $donation, $developmentVarious, 'Pending',$flatId,$totalAmount, $newInvoiceNumber)";
 
-        $sql = "INSERT INTO flat_bill (
+    // Prepare the SQL statement for inserting into flat_bill
+    $sql = "INSERT INTO flat_bill (
         f_date, f_month, f_year, f_service_charge, f_int_bill, f_dish_bill, 
-        f_flat_rent, f_c_current_bill, f_c_center_rent, f_guard_slry, f_details, 
+        f_flat_rent, f_c_current_bill, f_c_center_rent, f_guard_slry, f_details, f_due_note, f_due_flat, 
         f_empty_flat, f_c_center_various, f_atic_rent, f_d_donation, f_d_various_charge, 
         f_status, f_flatId, f_total, f_invoice_number
     ) VALUES (
         NOW(), '$selectedMonth', '$selectedYear', $serviceCharge, $internetBill, $dishBill, 
-        $flatRent, $commonBill, $centerRent, $guardBill, '$details', 
+        $flatRent, $commonBill, $centerRent, $guardBill, '$details', '$flatDueNote', $flatDue, 
         $emptyFlatBill, $centerVarious, $atticRent, $donation, $developmentVarious, 
         'Pending', $flatId, $totalAmount, $newInvoiceNumber
     )";
@@ -105,16 +107,16 @@ Sobarmart , Tongi , Gazipur
     // Execute SQL statement
     if ($conn->query($sql) === TRUE) {
         echo "Record inserted successfully.";
-        
+
         // Check if a payment record already exists for the same flatId, month, and year
         $checkPaymentSql = "SELECT * FROM payments WHERE f_flatId = $flatId AND f_month = '$selectedMonth' AND f_year = '$selectedYear'";
         $checkResult = $conn->query($checkPaymentSql);
 
         if ($checkResult->num_rows > 0) {
-            // If a record exists, update the total_amount
+            // If a record exists, update the f_due column
             $row = $checkResult->fetch_assoc();
-            $newTotalAmount = $row['total_amount'] + $totalAmount; // Add the new total amount
-            $updatePaymentSql = "UPDATE payments SET total_amount = $newTotalAmount WHERE payment_id = " . $row['payment_id'];
+            $newDueAmount = $row['f_due'] + $flatDue; // Add the new flatDue to the existing f_due
+            $updatePaymentSql = "UPDATE payments SET f_due = $newDueAmount WHERE payment_id = " . $row['payment_id'];
 
             if ($conn->query($updatePaymentSql) === TRUE) {
                 echo "Payment record updated successfully.";
@@ -126,7 +128,7 @@ Sobarmart , Tongi , Gazipur
             $paymentSql = "INSERT INTO payments (
                 f_flatId, paid_amount, payment_date, f_month, f_year, total_amount, f_due
             ) VALUES (
-                $flatId, 0.00, NOW(), '$selectedMonth', '$selectedYear', $totalAmount, 0.00
+                $flatId, 0.00, NOW(), '$selectedMonth', '$selectedYear', $totalAmount, $flatDue 
             )";
 
             if ($conn->query($paymentSql) === TRUE) {
@@ -230,6 +232,7 @@ Sobarmart , Tongi , Gazipur
                     ['description' => 'Common Bill', 'amount' => $commonBill],
                     ['description' => 'Guard Sallary', 'amount' => $guardBill],
                     ['description' => 'Empty Flat', 'amount' => $emptyFlatBill],
+                    ['description' => 'Flat Due', 'amount' => $flatDue],
                     ['description' => 'Center Rent', 'amount' => $centerRent],
                     ['description' => 'Center Various', 'amount' => $centerVarious],
                     ['description' => 'Attic Rent', 'amount' => $atticRent],

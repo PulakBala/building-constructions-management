@@ -83,10 +83,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </h5>
                     <hr>
                     <p class="card-text">
-                      <span class="fw-bold" style="color: #2ecc71;">Date:</span>
-                      <span class="text-muted"><?php echo htmlspecialchars($data["date"]); ?></span>
+                      <span class="fw-bold" style="color: #e67e22;">Total Invest:</span>
+                      <span class="text-muted" id="totalAmount_<?php echo $data['id']; ?>">
+                        <?php
+                          // Fetch total amount for the main asset
+                          $sqlTotal = "SELECT SUM(amount) as total_value FROM other_invest WHERE main_project_id = ?";
+                          $stmtTotal = $conn->prepare($sqlTotal);
+                          $stmtTotal->bind_param("i", $data['id']); // Changed from 's' to 'i' and from 'name' to 'id'
+                          $stmtTotal->execute();
+                          $resultTotal = $stmtTotal->get_result();
+                          $totalRow = $resultTotal->fetch_assoc();
+                          echo htmlspecialchars(number_format($totalRow['total_value'] ?? 0, 0)); // Added null coalescing operator
+                        ?>
+                      </span>
                     </p>
 
+                    <p class="card-text">
+                      <span class="fw-bold" style="color: #e67e22;">Total Earn:</span>
+                      <span class="text-muted" id="totalAmount_<?php echo $data['id']; ?>">
+                        <?php
+                          // Fetch total amount for the main asset
+                          $sqlTotal = "SELECT SUM(amount) as total_value FROM oth_earn WHERE main_project_id = ?";
+                          $stmtTotal = $conn->prepare($sqlTotal);
+                          $stmtTotal->bind_param("i", $data['id']); // Changed from 's' to 'i' and from 'name' to 'id'
+                          $stmtTotal->execute();
+                          $resultTotal = $stmtTotal->get_result();
+                          $totalRow = $resultTotal->fetch_assoc();
+                          echo htmlspecialchars(number_format($totalRow['total_value'] ?? 0, 0)); // Added null coalescing operator
+                        ?>
+                      </span>
+                    </p>
                     <!-- Updated buttons with icons -->
                     <div class="mt-3">
                       <a href="oth_ex_invest.php?id=<?php echo $data['id']; ?>" class="btn btn-success btn-sm">

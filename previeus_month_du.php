@@ -1,105 +1,204 @@
-<?php include('connection.php'); ?>
-<?php include('header.php'); ?>
-<?php include('sidebar.php'); ?>
+<?php include('connection.php') ?>
+<?php include('header.php') ?>
+<?php include('sidebar.php') ?>
 
 <?php
-// Set the default month and year to the current month and year
-$currentMonth = date('F'); // e.g., December
-$currentYear = date('Y'); // e.g., 2024
+// Fetch current month and year
+// $currentMonth = date('F');  
+// $currentYear = date('Y');  
+$currentMonth = isset($_POST['month']) ? $_POST['month'] : date('F', strtotime('last month'));
+$currentYear = isset($_POST['year']) ? $_POST['year'] : date('Y', strtotime('last month'));
 
-// Get selected month and year from the filter form
-$selectedMonth = $_GET['month'] ?? $currentMonth;
-$selectedYear = $_GET['year'] ?? $currentYear;
+// Check if a search query is provided
+$searchQuery = isset($_POST['query']) ? $_POST['query'] : '';
+
+// Fetch data
+$flatData = getFlatBillSummary($currentMonth, $currentYear);
+//print_r($flatData);
+
+
+// New variables for totalExpense
+$expenseMonth = date('F', strtotime($currentMonth . " +1 month"));
+$expenseYear = $currentYear;
+if ($currentMonth == 'December') {
+    $expenseYear = $currentYear + 1;
+}
+
+// Fetch total expense amount for the current month and year
+$totalExpense = getTotalExpense($expenseMonth, $expenseYear);
+
+// Function to fetch total expense amount
+function getTotalExpense($month, $year) {
+    global $conn; // Assuming $conn is your database connection
+    $query = "SELECT SUM(amount) as total_amount FROM expense WHERE MONTHNAME(date) = ? AND YEAR(date) = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("si", $month, $year);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    return $row['total_amount'];
+}
+
 ?>
 
 <main class="page-content">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="form-group col-md-12">
-        <div class="container-fluid m-0">
-          <h2>Total Due Amounts by Flat</h2>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="form-group col-md-12">
+                <!-- Add filter form -->
+                <div class="row mb-3 mt-4">
+                    <div class="col-md-4">
+                        <form method="POST" id="filterForm" class="d-flex gap-2">
+                            <select name="month" class="form-control">
+                                <?php
+                                $months = array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
+                                foreach ($months as $month) {
+                                    $selected = ($month == $currentMonth) ? 'selected' : '';
+                                    echo "<option value='$month' $selected>$month</option>";
+                                }
+                                ?>
+                            </select>
+                            <select name="year" class="form-control">
+                                <?php
+                                $currentYearNum = date('Y');
+                                for ($year = $currentYearNum; $year >= $currentYearNum - 5; $year--) {
+                                    $selected = ($year == $currentYear) ? 'selected' : '';
+                                    echo "<option value='$year' $selected>$year</option>";
+                                }
+                                ?>
+                            </select>
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                        </form>
+                    </div>
+                </div>
 
-          <!-- Filter Form -->
-          <form method="GET" class="mb-4 d-flex align-items-center gap-3">
-            <div class="mr-3">
-            
-              <select name="month" id="month" class="form-select form-control">
-                <?php
-                // Generate month options
-                $months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                foreach ($months as $month) {
-                  $selected = ($month === $selectedMonth) ? 'selected' : '';
-                  echo "<option value='$month' $selected>$month</option>";
-                }
-                ?>
-              </select>
+                <div class=" mt-4">
+                    <div class="row">
+                        
+                        
+                         <div class="col-md-4 mb-4">
+                            <div class="card shadow border-0">
+                                <div class="card-header bg-success text-white">
+                                    <h5 class="card-title">Last Month's Collection</h5>
+                                </div>
+                                <div class="card-body">
+                                    <h2 class="card-text text-info"><?= get_acc('0', $currentMonth, $currentYear, 'MONTH') ?> .TK</h2>
+                                    <p class="card-text text-center">Total collections in <?= $currentMonth ?></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                           <div class="col-md-4 mb-4">
+                            <div class="card shadow border-0">
+                                <div class="card-header bg-danger text-white">
+                                    <h5 class="card-title">Total Personal Expense</h5>
+                                </div>
+                                <div class="card-body">
+                                <h2> ৳<?php echo number_format($totalExpense, 2); ?></h2>
+                                    <p class="card-text text-center">Total expense amount <?= $expenseMonth ?>, <?= $expenseYear ?></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                          <div class="col-md-4 mb-4">
+                            <div class="card shadow border-0">
+                                <div class="card-header bg-danger text-white">
+                                    <h5 class="card-title">Last Month's Due</h5>
+                                </div>
+                                <div class="card-body">
+                                    <h2 class="card-text text-success"><?= get_acc('0', $currentMonth, $currentYear, 'DUE-MONTH') ?> .TK</h2>
+                                    <p class="card-text text-center">Total due amount <?= $currentMonth ?></p>
+                                </div>
+                            </div>
+                        </div>
+                       
+
+                        <!-- Expense Card -->
+                        <div class="col-md-4 mb-4">
+                            <div class="card shadow border-0">
+                                <div class="card-header bg-warning text-white">
+                                    <h5 class="card-title">Manager Expense</h5>
+                                </div>
+                                <div class="card-body">
+                                    <h2 class="card-text text-danger"><?= get_expense_sum(date('m', strtotime($expenseMonth)), $expenseYear) ?> .TK</h2>
+                                    <p class="card-text text-center">Total expenses in <?= $expenseMonth ?></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Collection Card -->
+                       
+
+
+                     
+
+
+                     
+
+
+
+
+                    </div>
+                </div>
+
+                <div>
+                    <input type="search" id="form1" class="form-control" placeholder="Search : Name" />
+                </div>
+
+                <div class="table-responsive mt-4">
+
+                    <h2>BILL SUMMARY FOR <?php echo $currentMonth . " " . $currentYear; ?></h2>
+                    <table class="table table-bordered  table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Manager Name</th>
+                                <th>Building Name</th>
+                                <th>Total Collected (৳)</th>
+                                <th>Total Due (৳)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($flatData as $flat): ?>
+                                <tr>
+                                    <td><?php echo $flat['f_flatId']; ?></td>
+                                    <td><?php echo $flat['owner_name']; ?></td>
+                                    <td><?php echo $flat['flatname']; ?></td>
+
+
+                                   <td><?php echo number_format($flat['total_amount'], 2); ?></td>
+                                    <td><?php echo number_format($flat['due'], 2); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Include Font Awesome for icons -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
             </div>
-
-            <div class="mr-3">
-            
-              <select name="year" id="year" class="form-select form-control">
-                <?php
-                // Generate year options from 2020 to the current year + 5
-                for ($year = 2020; $year <= date('Y') + 5; $year++) {
-                  $selected = ($year == $selectedYear) ? 'selected' : '';
-                  echo "<option value='$year' $selected>$year</option>";
-                }
-                ?>
-              </select>
-            </div>
-
-            <div class="d-flex align-items-end">
-              <button type="submit" class="btn btn-primary">Filter</button>
-            </div>
-          </form>
-
-
-          <!-- Table Displaying Dues -->
-          <table class="table table-bordered table-hover">
-            <thead>
-              <tr>
-                <th>Flat Name</th>
-                <th>Month</th>
-                <th>Mobile Number</th>
-                <th>Total Due</th>
-              </tr>
-            </thead>
-            <tbody>
-              <?php
-              // Query to get total dues for the selected month and year
-              $query = "
-                SELECT f.flatname, f.mobile_number, p.f_month, SUM(p.f_due) AS total_due
-                FROM flats f
-                JOIN payments p ON f.id = p.f_flatId
-                WHERE p.f_month = ? AND p.f_year = ?
-                GROUP BY f.id
-              ";
-
-              // Prepare and execute the query
-              $stmt = $conn->prepare($query);
-              $stmt->bind_param('ss', $selectedMonth, $selectedYear);
-              $stmt->execute();
-              $result = $stmt->get_result();
-
-              // Display the results in the table
-              while ($row = $result->fetch_assoc()) {
-                echo "<tr>
-                        <td>{$row['flatname']}</td>
-                        <td>{$row['f_month']}</td>
-                        <td>{$row['mobile_number']}</td>
-                        <td>{$row['total_due']}</td>
-                      </tr>";
-              }
-
-              $stmt->close();
-              ?>
-            </tbody>
-          </table>
-
         </div>
-      </div>
     </div>
-  </div>
 </main>
 
-<?php include('footer.php'); ?>
+<script>
+    $(document).ready(function() {
+        $("#form1").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $.ajax({
+                url: "search_students.php", // This is the PHP file that processes the search and returns results
+                type: "POST",
+                data: {
+                    query: value
+                },
+                success: function(data) {
+                    console.log(data);
+                    $("tbody").html(data); // Update the table body with the search results
+                }
+            });
+        });
+    });
+</script>
+
+<?php include('footer.php') ?>

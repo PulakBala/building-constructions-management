@@ -1,29 +1,31 @@
 <?php include('connection.php') ?>
 <?php include('header.php') ?>
-<?php include('sidebar.php')?>
+<?php include('sidebar.php') ?>
+
 <?php
 // Fetch current month and year
 // $currentMonth = date('F');  
 // $currentYear = date('Y');  
-
-$currentMonth = date('F', strtotime('last month')); // Previous month er naam
-$currentYear = date('Y', strtotime('last month'));  // Previous month er year
-
-// New variables for totalExpense
-$currentMonthForExpense = date('F'); // Current month er naam for totalExpense
-$currentYearForExpense = date('Y');   // Current year for totalExpense
-
-// var_dump($currentMonth);
+$currentMonth = isset($_POST['month']) ? $_POST['month'] : date('F', strtotime('last month'));
+$currentYear = isset($_POST['year']) ? $_POST['year'] : date('Y', strtotime('last month'));
 
 // Check if a search query is provided
 $searchQuery = isset($_POST['query']) ? $_POST['query'] : '';
 
 // Fetch data
 $flatData = getFlatBillSummary($currentMonth, $currentYear);
-// print_r($flatData);
+//print_r($flatData);
+
+
+// New variables for totalExpense
+$expenseMonth = date('F', strtotime($currentMonth . " +1 month"));
+$expenseYear = $currentYear;
+if ($currentMonth == 'December') {
+    $expenseYear = $currentYear + 1;
+}
 
 // Fetch total expense amount for the current month and year
-$totalExpense = getTotalExpense($currentMonthForExpense, $currentYearForExpense);
+$totalExpense = getTotalExpense($expenseMonth, $expenseYear);
 
 // Function to fetch total expense amount
 function getTotalExpense($month, $year) {
@@ -43,8 +45,48 @@ function getTotalExpense($month, $year) {
     <div class="container-fluid">
         <div class="row">
             <div class="form-group col-md-12">
+
+
                 <div class=" mt-4">
                     <div class="row">
+                        
+                        
+                         <div class="col-md-4 mb-4">
+                            <div class="card shadow border-0">
+                                <div class="card-header bg-success text-white">
+                                    <h5 class="card-title">Last Month's Collection</h5>
+                                </div>
+                                <div class="card-body">
+                                    <h2 class="card-text text-info"><?= get_acc('0', $currentMonth, $currentYear, 'MONTH') ?> .TK</h2>
+                                    <p class="card-text text-center">Total collections in <?= $currentMonth ?></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                           <div class="col-md-4 mb-4">
+                            <div class="card shadow border-0">
+                                <div class="card-header bg-danger text-white">
+                                    <h5 class="card-title">Total Personal Expense</h5>
+                                </div>
+                                <div class="card-body">
+                                <h2> ৳<?php echo number_format($totalExpense, 2); ?></h2>
+                                    <p class="card-text text-center">Total expense amount <?= $expenseMonth ?>, <?= $expenseYear ?></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                          <div class="col-md-4 mb-4">
+                            <div class="card shadow border-0">
+                                <div class="card-header bg-danger text-white">
+                                    <h5 class="card-title">Last Month's Due</h5>
+                                </div>
+                                <div class="card-body">
+                                    <h2 class="card-text text-success"><?= get_acc('0', $currentMonth, $currentYear, 'DUE-MONTH') ?> .TK</h2>
+                                    <p class="card-text text-center">Total due amount <?= $currentMonth ?></p>
+                                </div>
+                            </div>
+                        </div>
                        
 
                         <!-- Expense Card -->
@@ -54,50 +96,20 @@ function getTotalExpense($month, $year) {
                                     <h5 class="card-title">Manager Expense</h5>
                                 </div>
                                 <div class="card-body">
-                                    <h2 class="card-text text-danger"><?= get_expense_sum('THIS-MONTH') ?> .TK</h2>
-                                    <p class="card-text text-center">Total expenses in <?= $currentMonth ?></p>
+                                    <h2 class="card-text text-danger"><?= get_expense_sum(date('m', strtotime($expenseMonth)), $expenseYear) ?> .TK</h2>
+                                    <p class="card-text text-center">Total expenses in <?= $expenseMonth ?></p>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Collection Card -->
-                        <div class="col-md-4 mb-4">
-                            <div class="card shadow border-0">
-                                <div class="card-header bg-success text-white">
-                                    <h5 class="card-title">Collection</h5>
-                                </div>
-                                <div class="card-body">
-                                <h2 class="card-text text-info"><?= get_acc('0', $currentMonth, $currentYear, 'MONTH') ?> .TK</h2>
-                                <p class="card-text text-center">Total collections in <?= $currentMonth ?></p>
-                                </div>
-                            </div>
-                        </div>
+                       
 
 
-                       <div class="col-md-4 mb-4">
-                            <div class="card shadow border-0">
-                                <div class="card-header bg-danger text-white">
-                                    <h5 class="card-title">Total Due</h5>
-                                </div>
-                                <div class="card-body">
-                                    <h2 class="card-text text-success"><?= get_acc('0', $currentMonth, $currentYear, 'DUE-MONTH') ?> .TK</h2>
-                                    <p class="card-text text-center">Total due amount <?= $currentMonth ?></p>
-                                </div>
-                            </div>
-                        </div>
+                     
 
 
-                        <div class="col-md-4 mb-4">
-                            <div class="card shadow border-0">
-                                <div class="card-header bg-danger text-white">
-                                    <h5 class="card-title">Total Personal Expense</h5>
-                                </div>
-                                <div class="card-body">
-                                <h2> ৳<?php echo number_format($totalExpense, 2); ?></h2>
-                                    <p class="card-text text-center">Total expense amount <?= date('F') ?></p>
-                                </div>
-                            </div>
-                        </div>
+                     
 
 
 
@@ -130,7 +142,7 @@ function getTotalExpense($month, $year) {
                                     <td><?php echo $flat['flatname']; ?></td>
 
 
-                                    <td><?php echo number_format($flat['total_amount'], 2); ?></td>
+                                   <td><?php echo number_format($flat['total_amount'], 2); ?></td>
                                     <td><?php echo number_format($flat['due'], 2); ?></td>
                                 </tr>
                             <?php endforeach; ?>

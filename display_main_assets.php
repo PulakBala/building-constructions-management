@@ -91,6 +91,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                       <span class="text-muted"><?php echo htmlspecialchars($data["date"]); ?></span>
                     </p>
 
+                    <p class="card-text">
+                      <span class="fw-bold" style="color: #e67e22;">Total Amount:</span>
+                      <span class="text-muted" id="totalAmount_<?php echo $data['id']; ?>">
+                      <?php
+                          // Fetch total amount for the main asset
+                          $sqlTotal = "SELECT SUM(asset_value) as total_value FROM assets WHERE main_assets_id = ?";
+                          $stmtTotal = $conn->prepare($sqlTotal);
+                          $stmtTotal->bind_param("i", $data['id']); // Changed from 's' to 'i' and from 'name' to 'id'
+                          $stmtTotal->execute();
+                          $resultTotal = $stmtTotal->get_result();
+                          $totalRow = $resultTotal->fetch_assoc();
+                          echo htmlspecialchars(number_format($totalRow['total_value'] ?? 0, 0)); // Added null coalescing operator
+                        ?>
+                    </p>
+
                     <!-- Updated buttons with icons -->
                     <div class="mt-3">
                       <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#phoneModal" onclick="setNoteId(<?php echo $data['id']; ?>, '<?php echo htmlspecialchars($data['note_number']); ?>')">

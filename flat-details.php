@@ -63,7 +63,7 @@
                                 <p><strong>Flat No:</strong> <?php echo $flatNumber; ?></p>
                                 <p><strong>Rent:</strong> <?php echo $rent; ?></p>
                                 <p><strong>Advance:</strong> <?php echo $advance; ?></p>
-                            </div>  
+                            </div>
                         </div>
                         <form action="invoice.php" method="get">
                             <input type="hidden" name="flatId" value="<?php echo $flatId; ?>">
@@ -94,7 +94,7 @@
                                 </div>
                             </div>
 
-                            
+
                             <div class="form-section">
                                 <h5>3. Sallary</h5>
                                 <div class="form-row" style="display: none;">
@@ -108,7 +108,7 @@
                             </div>
 
 
-                            
+
                             <div class="form-section">
                                 <h5>4. Other expense</h5>
                                 <div class="form-row" style="display: none;">
@@ -131,6 +131,18 @@
                                 <div class="form-row">
                                     <label for="emptyFlatBill">Empty Flat </label>
                                     <input type="number" id="emptyFlatBill" name="emptyFlatBill" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($centerVarious); ?>">
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <h5>6. Flat Due</h5>
+                                <div class="form-row">
+                                    <label for="note">Note</label>
+                                    <input type="text" id="note" name="note" class="form-control" placeholder="Note">
+                                </div>
+                                <div class="form-row">
+                                    <label for="flatDue">Due amount </label>
+                                    <input type="number" id="flatDue" name="flatDue" class="form-control" placeholder="Enter amount" value="<?php echo htmlspecialchars($flatDue); ?>">
                                 </div>
                             </div>
 
@@ -193,7 +205,7 @@
 
 
                             <div class="form-section">
-                                <h5>6. Select Month and Year</h5>
+                                <h5>7. Select Month and Year</h5>
                                 <div class="form-row">
                                     <label for="month1">Select Month</label>
                                     <select id="month1" name="month1" class="form-control">
