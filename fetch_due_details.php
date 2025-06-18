@@ -19,7 +19,7 @@ $previousMonth = date(
 
 // now fetch
 $stmt = $conn->prepare(
-  "SELECT fb.f_due_flat, fb.f_date, fb.f_year, fb.f_month, f.owner_name
+  "SELECT fb.f_due_flat, fb.f_due_note, fb.f_date, fb.f_year, fb.f_month, fb.f_flatId, f.owner_name
      FROM flat_bill fb
      JOIN flats f ON f.id = fb.f_flatId
     WHERE fb.f_due_flat > 0
@@ -37,9 +37,11 @@ if ($result->num_rows > 0) {
                 <thead>
                     <tr>
                         <th>Owner Name</th>
-                        <th>Due Flat</th>
+                        <th>Flat Due Amount</th>
+                        <th>Flat Due Note</th>
                         <th>Year</th>
                         <th>Month</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>';
@@ -47,8 +49,24 @@ if ($result->num_rows > 0) {
         $html .= '<tr>
                     <td>' . htmlspecialchars($row['owner_name']) . '</td>
                     <td>' . htmlspecialchars($row['f_due_flat']) . '</td>
+                    <td>' . htmlspecialchars($row['f_due_note']) . '</td>
                     <td>' . htmlspecialchars($row['f_year']) . '</td>
                     <td>' . htmlspecialchars($row['f_month']) . '</td>
+                    <td>
+                        <form class="update-due-form" onsubmit="return updateDueAmount(event, ' . $row['f_flatId'] . ')">
+                            <input type="hidden" name="id" value="' . $row['f_flatId'] . '">
+                            <div class="mb-2">
+                                <input type="number" class="form-control form-control-sm" 
+                                       name="paid_amount" placeholder="Enter amount" 
+                                       max="' . $row['f_due_flat'] . '" required>
+                            </div>
+                            <div class="mb-2">
+                                <input type="text" class="form-control form-control-sm" 
+                                       name="due_note" placeholder="Enter flat due note" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm">Update</button>
+                        </form>
+                    </td>
                   </tr>';
     }
     $html .= '</tbody></table>';
@@ -57,4 +75,3 @@ if ($result->num_rows > 0) {
 }
 
 echo $html;
-?>

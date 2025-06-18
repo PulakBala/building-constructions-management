@@ -157,17 +157,14 @@ function getTotalExpense($month, $year)
 
                 <!-- Modal Structure -->
                 <div class="modal fade" id="dueModal" tabindex="-1" aria-labelledby="dueModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
+                    <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="dueModalLabel">Due Amount Details</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                            <p id="dueAmountDetails">Loading...</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <div id="dueAmountDetails">Loading...</div>
                             </div>
                         </div>
                     </div>
@@ -215,17 +212,67 @@ function getTotalExpense($month, $year)
 </script>
 
 <script>
-
 function openDueModal() {
     // Load dynamic content via AJAX
     $('#dueAmountDetails').html('Loading...');
-
+    
     $.ajax({
         url: 'fetch_due_details.php',
         method: 'GET',
         success: function(response) {
             $('#dueAmountDetails').html(response);
             $('#dueModal').modal('show');
+            
+            // Add event handler for form submission
+            $('.update-due-form').on('submit', function(e) {
+                e.preventDefault();
+                const form = $(this);
+                const formData = new FormData(this);
+                
+                $.ajax({
+                    url: 'update_due_amount.php',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        try {
+                            const data = JSON.parse(response);
+                            if(data.success) {
+                                toastr.success('Due amount updated successfully');
+                                
+                                // Get the current row
+                                const row = form.closest('tr');
+                                
+                                // Update the due amount in the table
+                                const dueAmountCell = row.find('td:eq(1)'); // Due Flat column
+                                const currentDue = parseFloat(dueAmountCell.textContent);
+                                const paidAmount = parseFloat(formData.get('paid_amount'));
+                                const newDue = currentDue - paidAmount;
+                                
+                                // Update the due amount cell
+                                dueAmountCell.textContent = newDue.toFixed(2);
+                                
+                                // Clear the form inputs
+                                form[0].reset();
+                                
+                                // If due amount becomes 0, remove the row
+                                if (newDue <= 0) {
+                                    row.remove();
+                                }
+                            } else {
+                                toastr.error(data.message || 'Error updating due amount');
+                            }
+                        } catch(e) {
+                            toastr.error('Error processing response');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error:', status, error);
+                        toastr.error('Error updating due amount');
+                    }
+                });
+            });
         },
         error: function() {
             $('#dueAmountDetails').html('<p class="text-danger">Failed to load data.</p>');
